@@ -1,0 +1,3 @@
+[submodule "mass-power-server"]
+	path = mass-power-server
+	url = https://github.com/riseofcat/mass-power-server.git
