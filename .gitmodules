@@ -1,3 +1,4 @@
 [submodule "submodule-server"]
 	path = submodule-server
 	url = https://github.com/riseofcat/mass-power-server.git
+	branch = master
