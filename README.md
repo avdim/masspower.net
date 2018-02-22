@@ -1,3 +1,5 @@
 # mass-power  
-./gradlew run
+after clone cd submodule-server and $git checkout master  
+  
+./gradlew run  
 
