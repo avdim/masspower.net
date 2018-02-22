@@ -1,1 +1,3 @@
-# mass-power
+# mass-power  
+./gradlew run
+
