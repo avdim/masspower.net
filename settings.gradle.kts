@@ -1,2 +1,3 @@
 
-include("cli", "core")
+include("cli")
+include("core")
