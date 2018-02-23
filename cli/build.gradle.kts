@@ -18,5 +18,6 @@ application {
 dependencies {
   compile(project(":core"))
   compile(project(":client-common"))
+  //in groovy expectedBy project(":client-common")
   compile(kotlin("stdlib"))
 }
