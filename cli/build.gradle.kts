@@ -1,14 +1,15 @@
 plugins {
-    application
-    kotlin("jvm")
+  application
+  kotlin("jvm")
 }
 
-kotlinProject()
+if(false)kotlinProject()
 
 application {
-    mainClassName = "cli.Main"
+  mainClassName = "cli.Main"
 }
 
 dependencies {
-    compile(project(":core"))
+  compile(project(":core"))
+  compile(kotlin("stdlib"))
 }

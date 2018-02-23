@@ -4,11 +4,8 @@ plugins {
 }
 
 allprojects {
-
-    group = "org.gradle.kotlin.dsl.samples.multiproject"
-
+    group = "io.mass-power"
     version = "1.0"
-
     repositories {
         jcenter()
     }
