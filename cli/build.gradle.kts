@@ -17,5 +17,6 @@ application {
 
 dependencies {
   compile(project(":core"))
+  compile(project(":client-common"))
   compile(kotlin("stdlib"))
 }
