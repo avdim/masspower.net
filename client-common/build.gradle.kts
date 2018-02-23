@@ -1,8 +1,8 @@
 import org.gradle.kotlin.dsl.*
 
 plugins {
-    kotlin("jvm")
-//    id("kotlin-platform-common")//todo
+//    kotlin("jvm")
+    id("kotlin-platform-common")
 //    id("kotlin2js")//это просто заглушка чтобы компилировалось вместе с stdlib, по хорошему надо kotlin-platform-commo
 }
 

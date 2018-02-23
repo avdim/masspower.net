@@ -2,7 +2,8 @@ import org.gradle.kotlin.dsl.*
 
 plugins {
   application
-  kotlin("jvm")
+//  kotlin("jvm")
+  id("kotlin-platform-jvm")
 }
 
 repositories {
@@ -17,7 +18,6 @@ application {
 
 dependencies {
   compile(project(":core"))
-  compile(project(":client-common"))
-  //in groovy expectedBy project(":client-common")
+  expectedBy(project(":client-common"))
   compile(kotlin("stdlib"))
 }
