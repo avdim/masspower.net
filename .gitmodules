@@ -2,3 +2,6 @@
 	path = submodule-server
 	url = https://github.com/riseofcat/mass-power-server.git
 	branch = master
+[submodule "submodule-html"]
+	path = submodule-html
+	url = https://github.com/riseofcat/mass-power-html.git
