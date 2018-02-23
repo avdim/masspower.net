@@ -6,8 +6,10 @@ plugins {
 allprojects {
     group = "io.mass-power"
     version = "1.0"
-    repositories {
-        jcenter()
+    if(false) {
+        repositories {
+            jcenter()
+        }
     }
 }
 

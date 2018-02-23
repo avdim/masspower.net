@@ -1,6 +1,12 @@
+import org.gradle.kotlin.dsl.*
+
 plugins {
   application
   kotlin("jvm")
+}
+
+repositories {
+  jcenter()
 }
 
 if(false)kotlinProject()
