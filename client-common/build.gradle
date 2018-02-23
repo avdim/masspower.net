@@ -9,11 +9,10 @@ buildscript {
     }
 }
 
-group 'com.n8cats'
-version '1.0-SNAPSHOT'
+//group 'com.n8cats'
+//version '1.0-SNAPSHOT'
 
-//apply plugin: 'kotlin-platform-common'//todo!
-apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'kotlin-platform-common'
 
 repositories {
     mavenCentral()
