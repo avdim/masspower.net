@@ -11,7 +11,8 @@ repositories {
 }
 
 dependencies {
-    compile(kotlin("stdlib"))
+    compile(kotlin("stdlib"))//todo try org.jetbrains.kotlin:kotlin-stdlib-common
+    compile(project(":server-common"))
 }
 
 //dependencies {

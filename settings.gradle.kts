@@ -3,6 +3,8 @@ import java.io.*
 include("cli")
 include("jvm-lib")
 project(":jvm-lib").projectDir = File("submodule-server/jvm-lib")
+include("server-common")
+project(":server-common").projectDir = File("submodule-server/server-common")
 include("client-common")
 include("submodule-html")
 
