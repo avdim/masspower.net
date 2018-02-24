@@ -17,7 +17,7 @@ application {
 }
 
 dependencies {
-  compile(project(":jvm-lib"))
+  compile(project(":lib-jvm"))
   expectedBy(project(":server-common"))
   compile(kotlin("stdlib"))
 }
