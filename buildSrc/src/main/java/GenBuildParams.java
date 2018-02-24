@@ -6,12 +6,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
+//todo переписать на kotlin
 public class GenBuildParams extends DefaultTask {
 @TaskAction
 public void run() {
     try{
-        BufferedWriter writer = new BufferedWriter(new FileWriter("./src/main/kotlin/Gen.kt"));
+        System.out.println("getProject().getProjectDir() = " + getProject().getProjectDir());
+        BufferedWriter writer = new BufferedWriter(new FileWriter(getProject().getProjectDir().getAbsolutePath() + "/src/main/kotlin/Gen.kt"));
         String time = new SimpleDateFormat("HH:mm:ss dd-MMMM-yy").format(Calendar.getInstance().getTime());
         writer.write ("object Gen {\n");
         writer.write ("fun date():String{return \"" + time + "\"}" + "\n");
