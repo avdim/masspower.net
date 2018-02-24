@@ -13,7 +13,7 @@ repositories {
 if(false)kotlinProject()
 
 application {
-  mainClassName = "cli.Main"
+  mainClassName = "masspower.client.Main"
 }
 
 dependencies {

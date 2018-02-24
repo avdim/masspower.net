@@ -1,11 +1,11 @@
 @file:JvmName("Main")
 
-package cli
+package masspower.client
 
 import common.*
 
 fun main(vararg args:String) {
   val answer = JvmLib.test()
   val multiplatform = ServerCommon.test()
-  println("cli: $answer. $multiplatform")
+  println("client-jvm: $answer. $multiplatform")
 }
