@@ -18,6 +18,6 @@ application {
 
 dependencies {
   compile(project(":jvm-lib"))
-  expectedBy(project(":client-common"))
+  expectedBy(project(":server-common"))
   compile(kotlin("stdlib"))
 }
