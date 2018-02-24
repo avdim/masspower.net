@@ -1,5 +1,8 @@
 import org.gradle.kotlin.dsl.*
-
+//Сейчас этот модуль игнорируется. У меня не получилось подцепить одновременно:
+//Можно использовать только один expectedBy:
+//expectedBy(project(":server-common"))
+//expectedBy(project(":client-common"))
 plugins {
 //    kotlin("jvm")
     id("kotlin-platform-common")
