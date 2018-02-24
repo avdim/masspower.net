@@ -1,8 +1,8 @@
 import java.io.*
 
 include("cli")
-include("core")
-project(":core").projectDir = File("submodule-server/core")
+include("jvm-lib")
+project(":jvm-lib").projectDir = File("submodule-server/jvm-lib")
 include("client-common")
 include("submodule-html")
 
