@@ -7,6 +7,8 @@ include("server-common")
 project(":server-common").projectDir = File("submodule-server/server-common")
 include("client-common")
 include("submodule-html")
+include("desktop")
+include("core")
 
 if(false) {
   includeBuild("submodule-server") {

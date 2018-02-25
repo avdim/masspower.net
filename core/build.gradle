@@ -1,0 +1,11 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+dependencies {
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    //  compile "com.kotcrab.vis:vis-ui:$visUiVersion"
+    compile "com.github.czyzby:gdx-websocket:$websocketVersion"
+//    compile "uk.com.robust-it:cloning:1.9.6"
+      compile project(":share")
+//  compile project(":lib")
+}
+        
