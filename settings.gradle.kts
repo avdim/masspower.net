@@ -9,6 +9,7 @@ include("client-common")
 include("submodule-html")
 include("desktop")
 include("core")
+include("android")
 
 if(false) {
   includeBuild("submodule-server") {
