@@ -1,8 +1,21 @@
+apply plugin: 'java'
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+ext.appName = 'mass-power.io'//power-mass.io,react-mass.io
+
+repositories {
+  mavenCentral()
+  jcenter()
+  maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+  mavenLocal()
+}
+
 apply plugin: 'application'
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').absolutePath ]
 mainClassName = 'com.riseofcat.desktop.DesktopLauncher'
 sourceCompatibility = 1.7//todo maybe applyJava and 1.8?
 dependencies {
+  compile project(':lib-jvm')
   compile project(':core')
   compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
   compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
