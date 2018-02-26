@@ -1,3 +1,22 @@
+buildscript {//libgdx
+  repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    mavenLocal()
+  }
+  dependencies {
+    classpath "com.android.tools.build:gradle:$androidPluginVersion"
+  }
+}
+
+repositories {
+  mavenCentral()
+  jcenter()
+  maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+  mavenLocal()
+}
+
 //apply plugin: 'android'
 apply plugin: 'com.android.application'
 def java8 = false
