@@ -1,5 +1,6 @@
 package com.riseofcat;
 import com.badlogic.gdx.utils.Json;
+import com.google.gson.Gson;
 import com.n8cats.lib_gwt.DefaultValueMap;
 import com.n8cats.lib_gwt.LibAllGwt;
 import com.n8cats.lib_gwt.Signal;
@@ -9,6 +10,13 @@ import com.n8cats.share.Params;
 import com.n8cats.share.ServerPayload;
 import com.n8cats.share.ShareTodo;
 import com.n8cats.share.Tick;
+import com.n8cats.share.data.Angle;
+import com.n8cats.share.data.BigAction;
+import com.n8cats.share.data.Car;
+import com.n8cats.share.data.PlayerAction;
+import com.n8cats.share.data.PlayerId;
+import com.n8cats.share.data.State;
+import com.n8cats.share.data.XY;
 import com.n8cats.share.redundant.ServerSayS;
 import com.riseofcat.reflect.Conf;
 
@@ -23,9 +31,9 @@ public class Model {
 public final PingClient<ServerPayload, ClientPayload> client;
 @Deprecated public long copyTime;
 @Deprecated public long tickTime;
-public Logic.Player.Id playerId;
-private final DefaultValueMap<Tick, List<Logic.BigAction>> actions = new DefaultValueMap<>(new HashMap<Tick, List<Logic.BigAction>>(), new DefaultValueMap.ICreateNew<List<Logic.BigAction>>() {
-	public List<Logic.BigAction> createNew() {return App.context.createConcurrentList();}
+public PlayerId playerId;
+private final DefaultValueMap<Tick, List<BigAction>> actions = new DefaultValueMap<>(new HashMap<Tick, List<BigAction>>(), new DefaultValueMap.ICreateNew<List<BigAction>>() {
+	public List<BigAction> createNew() {return App.context.createConcurrentList();}
 });
 private final DefaultValueMap<Tick, List<Action>> myActions = new DefaultValueMap<>(new HashMap<Tick, List<Action>>(), new DefaultValueMap.ICreateNew<List<Action>>() {
 	public List<Action> createNew() {return new ArrayList<>();}
@@ -54,7 +62,7 @@ public static class Sync {
 		return calcSrvTck(t) + (clientTick - serverTick) * (1f - LibAllGwt.Fun.arg0toInf(t - time, 600));
 	}
 }
-public Model(Json json, Conf conf) {
+public Model(Gson json, Conf conf) {
 	client = new PingClient(json, conf.host, conf.port, "socket", ServerSayS.class);
 	client.connect(new Signal.Listener<ServerPayload>() {
 		public void onSignal(ServerPayload s) {
@@ -80,16 +88,16 @@ public Model(Json json, Conf conf) {
 						if(s.canceled != null) {
 							if(s.canceled.contains(next.aid)) {
 								iterator.remove();
-								clearCache(t.tick + 1);
+								clearCache(t.getTick() + 1);
 								continue;
 							}
 						}
 						if(s.apply != null) {
 							for(ServerPayload.AppliedActions apply : s.apply) {
 								if(apply.aid == next.aid) {
-									if(!ShareTodo.SIMPLIFY) actions.getExistsOrPutDefault(t.add(apply.delay)).add(new Logic.PlayerAction(playerId, next.action).toBig());
+									if(!ShareTodo.INSTANCE.getSIMPLIFY()) actions.getExistsOrPutDefault(t.add(apply.delay)).add(new PlayerAction(playerId, next.getAction()).toBig());
 									iterator.remove();
-									clearCache(t.tick + 1);
+									clearCache(t.getTick() + 1);
 									continue whl;
 								}
 							}
@@ -108,34 +116,34 @@ public boolean ready() {
 	return playerId != null;
 }
 private int previousActionId = 0;
-public void action(Logic.Action action) {
+public void action(com.n8cats.share.data.Action action) {
 	synchronized(this) {
 		final int clientTick = (int) sync.calcClientTck();//todo +0.5f?
 		if(!ready()) return;
-		if(false) if(sync.calcSrvTck() - sync.calcClientTck() > Params.DELAY_TICKS * 1.5 || sync.calcClientTck() - sync.calcSrvTck() > Params.FUTURE_TICKS * 1.5) return;
+		if(false) if(sync.calcSrvTck() - sync.calcClientTck() > Params.INSTANCE.getDELAY_TICKS() * 1.5 || sync.calcClientTck() - sync.calcSrvTck() > Params.INSTANCE.getFUTURE_TICKS() * 1.5) return;
 		int w = (int) (client.smartLatencyS / Logic.UPDATE_S + 1);//todo delta serverTick-clientTick
 		ClientPayload.ClientAction a = new ClientPayload.ClientAction();
-		a.aid = ++previousActionId;
-		a.wait = w;
-		a.tick = clientTick + w;//todo serverTick?
-		a.action = action;
+		a.setAid(++previousActionId);
+		a.setWait(w);
+		a.setTick(clientTick + w);//todo serverTick?
+		a.setAction(action);
 		synchronized(myActions) {
-			myActions.getExistsOrPutDefault(new Tick(clientTick + w)).add(new Action(a.aid, a.action));
+			myActions.getExistsOrPutDefault(new Tick(clientTick + w)).add(new Action(a.getAid(), a.getAction()));
 		}
 		ClientPayload payload = new ClientPayload();
-		payload.tick = clientTick;
-		payload.actions = new ArrayList<>();
-		payload.actions.add(a);
+		payload.setTick(clientTick);
+		payload.setActions(new ArrayList<ClientPayload.ClientAction>());
+		payload.getActions().add(a);
 		client.say(payload);
 	}
 }
-public void touch(Logic.XY pos) {//todo move out?
-	Logic.State displayState = getDisplayState();
+public void touch(XY pos) {//todo move out?
+	State displayState = getDisplayState();
 	if(displayState == null || playerId == null) return;
-	for(Logic.Car car : displayState.cars) {
-		if(playerId.equals(car.owner)) {
-			Logic.Angle direction = pos.sub(car.pos).calcAngle().add(new Logic.DegreesAngle(0 * 180));
-			action(new Logic.Action(direction));
+	for(Car car : displayState.getCars()) {
+		if(playerId.equals(car.getOwner())) {
+			Angle direction = pos.sub(car.getPos()).calcAngle().add(Angle.degreesAngle(0 * 180));
+			action(new com.n8cats.share.data.Action(direction));
 			break;
 		}
 	}
@@ -148,7 +156,7 @@ public void update(float graphicDelta) {
 //	clientTick += graphicDelta / Logic.UPDATE_S;
 //	clientTick += (serverTick - clientTick) * LibAllGwt.Fun.arg0toInf(Math.abs((serverTick - clientTick) * graphicDelta), 6f);
 }
-public @Nullable Logic.State getDisplayState() {
+public @Nullable State getDisplayState() {
 	if(sync == null) return null;
 	return getState((int) sync.calcClientTck());
 }
@@ -163,7 +171,7 @@ private StateWrapper getNearestCache(int tick) {
 private void saveCache(StateWrapper value) {
 	cache = value;
 }
-private @Nullable Logic.State getState(int tick) {
+private @Nullable State getState(int tick) {
 	StateWrapper result = getNearestCache(tick);
 	Long t = null;
 	if(result == null) {
@@ -181,31 +189,29 @@ private @Nullable Logic.State getState(int tick) {
 public void dispose() {
 	client.close();
 }
-private class Action extends Logic.PlayerAction {
+private class Action extends PlayerAction {
 	public final int aid;
-	public Action(int aid, Logic.Action action) {
-		this.id = playerId;
-		this.action = action;
+	public Action(int aid, com.n8cats.share.data.Action action) {
+		super(playerId, action);
 		this.aid = aid;
 	}
 }
 private class StateWrapper {
-	public Logic.State state;
+	public State state;
 	public int tick;
-	public StateWrapper(Logic.State	 state, int tick) {
+	public StateWrapper(State state, int tick) {
 		this.state = state;
 		this.tick = tick;
 	}
 	public StateWrapper(StateWrapper obj) {
 		long t = App.timeMs();
-		if(false) state = UtilsCore.copy(obj.state);//todo тяжёлая операция
-		else state = new Logic.State(obj.state);
+		state = obj.state.copy2();
 		copyTime += App.timeMs() - t;
 		this.tick = obj.tick;
 	}
 	public void tick(int targetTick) {
 		while(tick < targetTick) {
-			List<Logic.BigAction> other = actions.map.get(new Tick(tick));
+			List<BigAction> other = actions.map.get(new Tick(tick));
 			if(other != null) state.act(other.iterator());
 			List<Action> my = myActions.map.get(new Tick(tick));
 			if(my != null) {

@@ -35,7 +35,7 @@ private static LwjglApplication createApplication() {
 
 private static LwjglApplicationConfiguration getDefaultConfiguration() {
 	final LwjglApplicationConfiguration configuration = new LwjglApplicationConfiguration();
-	configuration.title = Params.TITLE;
+	configuration.title = Params.INSTANCE.getTITLE();
 	configuration.width = 400;
 	configuration.height = 400;
 //	for(int size : new int[]{128, 64, 32, 16}) {

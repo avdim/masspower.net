@@ -20,5 +20,6 @@ dependencies {
 //    compile "uk.com.robust-it:cloning:1.9.6"
       compile project(":lib-jvm")
 //  compile project(":lib")
+		compile "com.google.code.gson:gson:2.7"
 }
         

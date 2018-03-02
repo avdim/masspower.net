@@ -1,3 +1,13 @@
+//todo kotlin multiplatform:
+//apply plugin: 'com.android.application'
+//apply plugin: 'kotlin-platform-android'
+//// ...
+//
+//dependencies {
+//  expectedBy project(":multiplatform-app")
+//  // ...
+//}
+
 buildscript {//libgdx
   repositories {
     mavenCentral()

@@ -7,6 +7,7 @@ import com.github.czyzby.websocket.WebSockets;
 import com.github.czyzby.websocket.data.WebSocketCloseCode;
 import com.github.czyzby.websocket.data.WebSocketState;
 import com.github.czyzby.websocket.net.ExtendedNet;
+import com.google.gson.Gson;
 import com.n8cats.lib_gwt.LibAllGwt;
 import com.n8cats.lib_gwt.Signal;
 import com.n8cats.share.ClientSay;
@@ -21,13 +22,13 @@ public class PingClient<S, C> {
 private final Signal<S> incoming = new Signal<>();
 private final WebSocket socket;
 private final Queue<ClientSay<C>> queue = new LinkedList<>();//todo test
-private final Json json;
-public float smartLatencyS = Params.DEFAULT_LATENCY_S;
-public float latencyS = Params.DEFAULT_LATENCY_S;
+private final Gson json;
+public float smartLatencyS = Params.INSTANCE.getDEFAULT_LATENCY_S();
+public float latencyS = Params.INSTANCE.getDEFAULT_LATENCY_S();
 private Queue<LatencyTime> latencies = new ArrayDeque<>();
-public PingClient(final Json j, String host, int port, String path, final Class<ServerSay<S>> typeS) {
+public PingClient(final Gson j, String host, int port, String path, final Class<ServerSay<S>> typeS) {
 	this.json = j;
-	latencies.add(new LatencyTime(Params.DEFAULT_LATENCY_MS, App.timeMs()));
+	latencies.add(new LatencyTime(Params.INSTANCE.getDEFAULT_LATENCY_MS(), App.timeMs()));
 	socket = LibAllGwt.TRUE() ? ExtendedNet.getNet().newWebSocket(host, port, path) : WebSockets.newSocket(WebSockets.toWebSocketUrl(host, port, path));
 	socket.addListener(new WebSocketAdapter() {
 		public boolean onOpen(final WebSocket webSocket) {
@@ -39,28 +40,28 @@ public PingClient(final Json j, String host, int port, String path, final Class<
 		}
 		public boolean onMessage(final WebSocket webSocket, final String packet) {
 			if(false) App.log.info(packet);
-			ServerSay<S> serverSay = json.fromJson(typeS, packet);
-			if(serverSay.latency != null) {
-				latencyS = serverSay.latency / LibAllGwt.MILLIS_IN_SECCOND;
-				latencies.offer(new LatencyTime(serverSay.latency, App.timeMs()));
+			ServerSay<S> serverSay = json.fromJson(packet, typeS);
+			if(serverSay.getLatency() != null) {
+				latencyS = serverSay.getLatency() / LibAllGwt.MILLIS_IN_SECCOND;
+				latencies.offer(new LatencyTime(serverSay.getLatency(), App.timeMs()));
 				while(latencies.size() > 100) latencies.poll();
 				float sum = 0;
 				float weights = 0;
 				final long time = App.timeMs();
 				for(LatencyTime l : latencies) {
 					double w = 1 - LibAllGwt.Fun.arg0toInf(time - l.time, 10_000);
-					w *= 1 - LibAllGwt.Fun.arg0toInf(l.latency, Params.DEFAULT_LATENCY_MS);
+					w *= 1 - LibAllGwt.Fun.arg0toInf(l.latency, Params.INSTANCE.getDEFAULT_LATENCY_MS());
 					sum += w * l.latency;
 					weights += w;
 				}
 				if(weights > Float.MIN_VALUE * 1E10) smartLatencyS = sum / weights / LibAllGwt.MILLIS_IN_SECCOND;
 			}
-			if(serverSay.ping) {
+			if(serverSay.getPing()) {
 				ClientSay<C> answer = new ClientSay<>();
-				answer.pong = true;
+				answer.setPong(true);
 				say(answer);
 			}
-			if(serverSay.payload != null) incoming.dispatch(serverSay.payload);
+			if(serverSay.getPayload() != null) incoming.dispatch(serverSay.getPayload());
 			return FULLY_HANDLED;
 		}
 		public boolean onMessage(WebSocket webSocket, byte[] packet) {
@@ -86,7 +87,7 @@ public void close() {
 }
 public void say(C payload) {
 	ClientSay<C> answer = new ClientSay<>();
-	answer.payload = payload;
+	answer.setPayload(payload);
 	say(answer);
 }
 private void say(ClientSay<C> say) {

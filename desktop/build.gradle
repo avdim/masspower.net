@@ -12,7 +12,7 @@ repositories {
   mavenLocal()
 }
 
-apply plugin: 'application'
+apply plugin: 'application' ///java -jar desktop/build/libs/mass-power.io-1.0.jar
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').absolutePath ]
 mainClassName = 'com.riseofcat.desktop.DesktopLauncher'
 sourceCompatibility = 1.7//todo maybe applyJava and 1.8?

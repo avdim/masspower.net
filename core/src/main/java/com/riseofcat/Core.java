@@ -17,11 +17,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.gson.Gson;
 import com.n8cats.lib_gwt.LibAllGwt;
-import com.n8cats.share.Logic;
+import com.n8cats.share.data.Car;
+import com.n8cats.share.data.Food;
+import com.n8cats.share.data.Reactive;
+import com.n8cats.share.data.State;
+import com.n8cats.share.data.XY;
 import com.riseofcat.redundant.ShapeRenderer2;
 import com.riseofcat.reflect.Conf;
 
@@ -70,8 +74,8 @@ public void create() {
 	stage = new Stage(viewport2/*, batch*/);
 	stage.addActor(new GradientShapeRect(200, 50));
 	stage.addActor(new Image(Resources.Textures.tank));
-	Json json = new Json();
-	model = new Model(json, json.fromJson(Conf.class, Gdx.files.internal("conf.json")));
+	Gson json = new Gson();
+	model = new Model(json, json.fromJson(Gdx.files.internal("conf.json").readString(), Conf.class));
 	batchShader = new ShaderProgram(defaultVertex, Gdx.files.internal("shader/good_blur.frag"));
 	if(!batchShader.isCompiled()) App.log.error(batchShader.getLog());
 	if(false) batch.setShader(batchShader);
@@ -79,7 +83,7 @@ public void create() {
 	shapeRenderer.setAutoShapeType(false);
 	Gdx.input.setInputProcessor(new InputMultiplexer(stage, new InputAdapter() {
 		public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-			model.touch(new GdxXY(viewport1.unproject(new Vector2(screenX, screenY))));
+			model.touch(getXY(viewport1.unproject(new Vector2(screenX, screenY))));
 			return true;
 		}
 	}));
@@ -93,25 +97,25 @@ public void resize(int width, int height) {
 	batch.setProjectionMatrix(viewport2.getCamera().combined);
 	shapeRenderer.setProjectionMatrix(viewport1.getCamera().combined);
 }
-Logic.XY backgroundOffset = new GdxXY(new Logic.XY());
+XY backgroundOffset = new XY(0,0);
 public void render() {
 	final boolean TEST_TEXTURE = LibAllGwt.FALSE();
 	model.update(Gdx.graphics.getDeltaTime());
-	Logic.State state = model.getDisplayState();
+	State state = model.getDisplayState();
 	if(state != null) {
-		for(Logic.Car car : state.cars) {
-			if(car.owner.equals(model.playerId)) {
-				Logic.XY previous = new GdxXY(viewport1.getCamera().position);
-				viewport1.getCamera().position.x = car.pos.x;
-				viewport1.getCamera().position.y = car.pos.y;
+		for(Car car : state.getCars()) {
+			if(car.getOwner().equals(model.playerId)) {
+				XY previous = getXY(viewport1.getCamera().position);
+				viewport1.getCamera().position.x = car.getPos().getX();
+				viewport1.getCamera().position.y = car.getPos().getY();
 				viewport1.getCamera().update();
 				shapeRenderer.setProjectionMatrix(viewport1.getCamera().combined);
-				Logic.XY change = new GdxXY(viewport1.getCamera().position).sub(previous);
-				if(change.x > state.width()/2) change.x -= state.width();
-				else if(change.x < -state.width()/2) change.x += state.width();
-				if(change.y > state.height()/2) change.y -= state.height();
-				else if(change.y < -state.height()/2) change.y += state.height();
-				backgroundOffset = backgroundOffset.add(new GdxXY(change), 0.0001f);
+				XY change = getXY(viewport1.getCamera().position).sub(previous);
+				if(change.getX() > state.width()/2) change.setX(change.getX() - state.width());
+				else if(change.getX() < -state.width()/2) change.setX(change.getX() + state.width());
+				if(change.getY() > state.height()/2) change.setY(change.getY() - state.height());
+				else if(change.getY() < -state.height()/2) change.setY(change.getY() + state.height());
+				backgroundOffset = backgroundOffset.add(change, 0.0001f);
 				break;
 			}
 		}
@@ -152,21 +156,21 @@ public void render() {
 		}
 		shapeRenderer.begin(ShapeRenderer2.ShapeType.Filled);
 		shapeRenderer.setColor(Color.GRAY);
-		for(Logic.Food food : state.foods) {
-			Logic.XY r = calcRenderXY(state, food.pos);
-			shapeRenderer.circle(r.x, r.y, food.radius());
+		for(Food food : state.getFoods()) {
+			XY r = calcRenderXY(state, food.getPos());
+			shapeRenderer.circle(r.getX(), r.getY(), food.radius());
 		}
-		for(Logic.Reactive react : state.reactive) {
-			Logic.XY r = calcRenderXY(state, react.pos);
-			Color color = colors[react.owner.id % (colors.length - 1)];
+		for(Reactive react : state.getReactive()) {
+			XY r = calcRenderXY(state, react.getPos());
+			Color color = colors[react.getOwner().id % (colors.length - 1)];
 			shapeRenderer.setColor(color);
-			shapeRenderer.circle(r.x, r.y, react.radius());
+			shapeRenderer.circle(r.getX(), r.getY(), react.radius());
 		}
-		for(Logic.Car car : state.cars) {
-			Logic.XY r = calcRenderXY(state, car.pos);
-			Color color = colors[car.owner.id % (colors.length - 1)];
+		for(Car car : state.getCars()) {
+			XY r = calcRenderXY(state, car.getPos());
+			Color color = colors[car.getOwner().id % (colors.length - 1)];
 			shapeRenderer.setColor(color);
-			shapeRenderer.circle(r.x, r.y, car.radius()/*, 20*/);
+			shapeRenderer.circle(r.getX(), r.getY(), car.radius()/*, 20*/);
 		}
 		shapeRenderer.end();
 	}
@@ -205,18 +209,18 @@ private void applyUniform(ShaderProgram program) {
 	}
 	program.setUniformf(program.fetchUniformLocation("resolution", false), width, height);
 	program.setUniformf("time", App.sinceStartS());//30f
-	program.setUniformf("mouse", backgroundOffset.x, backgroundOffset.y);
+	program.setUniformf("mouse", backgroundOffset.getX(), backgroundOffset.getY());
 }
-private Logic.XY calcRenderXY(Logic.State state, Logic.XY pos) {
-	float x = pos.x;
+private XY calcRenderXY(State state, XY pos) {
+	float x = pos.getX();
 	float dx = viewport1.getCamera().position.x - x;
 	if(dx > state.width()/2) x += state.width();
 	else if(dx < -state.width()/2) x -= state.width();
-	float y = pos.y;
+	float y = pos.getY();
 	float dy = viewport1.getCamera().position.y - y;
 	if(dy > state.height()/2) y += state.height();
 	else if(dy < -state.height()/2) y -= state.height();
-	return new Logic.XY(x, y);
+	return new XY(x, y);
 }
 private void checkForGlError() {
 	int error = Gdx.gl.glGetError();
@@ -230,5 +234,13 @@ public void dispose() {
 	shapeRenderer.dispose();
 	//todo dispose shaders
 	Resources.dispose();
+}
+
+public static XY getXY(Vector2 vector) {
+	return new XY(vector.x, vector.y);
+}
+
+public static XY getXY(Vector3 vector) {
+	return new XY(vector.x, vector.y);
 }
 }
