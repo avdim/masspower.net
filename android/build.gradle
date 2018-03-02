@@ -13,9 +13,11 @@ buildscript {//libgdx
     mavenCentral()
     jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'https://maven.google.com' }
     mavenLocal()
   }
   dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "com.android.tools.build:gradle:$androidPluginVersion"
   }
 }
@@ -27,14 +29,14 @@ repositories {
   mavenLocal()
 }
 
-//apply plugin: 'android'
 apply plugin: 'com.android.application'
+//apply plugin: 'kotlin-platform-android' //todo kotlin multiplatform
 def java8 = false
 
 android {
-  buildToolsVersion '25.0.2'
+  buildToolsVersion '26.0.3'
   if(java8) {
-    compileSdkVersion 25
+    compileSdkVersion 26
   } else {
     compileSdkVersion 23
   }
@@ -69,7 +71,7 @@ android {
     applicationId 'com.riseofcat'
     if(java8) {
       minSdkVersion 24//8
-      targetSdkVersion 25//23
+      targetSdkVersion 26//23
       jackOptions {
         enabled true
       }
@@ -90,6 +92,7 @@ configurations { natives }
 
 dependencies {
   compile project(':core')
+//  expectedBy project(":server-common")//todo kotlin multiplatform
   compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
   compile "com.github.czyzby:gdx-websocket-common:$websocketVersion"
   natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
