@@ -162,13 +162,13 @@ public void render() {
 		}
 		for(Reactive react : state.getReactive()) {
 			XY r = calcRenderXY(state, react.getPos());
-			Color color = colors[react.getOwner().id % (colors.length - 1)];
+			Color color = colors[react.getOwner().getId() % (colors.length - 1)];
 			shapeRenderer.setColor(color);
 			shapeRenderer.circle(r.getX(), r.getY(), react.radius());
 		}
 		for(Car car : state.getCars()) {
 			XY r = calcRenderXY(state, car.getPos());
-			Color color = colors[car.getOwner().id % (colors.length - 1)];
+			Color color = colors[car.getOwner().getId() % (colors.length - 1)];
 			shapeRenderer.setColor(color);
 			shapeRenderer.circle(r.getX(), r.getY(), car.radius()/*, 20*/);
 		}

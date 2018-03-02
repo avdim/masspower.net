@@ -1,4 +1,6 @@
 {
-	"host": "mass-power.herokuapp.com",
-	"port": 80
+	"hostRemote": "mass-power.herokuapp.com",
+	"portRemote": 80,
+	"host": "localhost",
+	"port": 5000
 }

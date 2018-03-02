@@ -1,11 +1,9 @@
 package com.riseofcat;
-import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
 import com.n8cats.lib_gwt.DefaultValueMap;
 import com.n8cats.lib_gwt.LibAllGwt;
 import com.n8cats.lib_gwt.Signal;
 import com.n8cats.share.ClientPayload;
-import com.n8cats.share.Logic;
 import com.n8cats.share.Params;
 import com.n8cats.share.ServerPayload;
 import com.n8cats.share.ShareTodo;
@@ -13,6 +11,7 @@ import com.n8cats.share.Tick;
 import com.n8cats.share.data.Angle;
 import com.n8cats.share.data.BigAction;
 import com.n8cats.share.data.Car;
+import com.n8cats.share.data.Logic;
 import com.n8cats.share.data.PlayerAction;
 import com.n8cats.share.data.PlayerId;
 import com.n8cats.share.data.State;
@@ -52,7 +51,7 @@ public static class Sync {
 		else this.clientTick = oldSync.calcClientTck();
 	}
 	private float calcSrvTck(long t) {
-		return serverTick + (t - time) / (float)Logic.UPDATE_MS;
+		return serverTick + (t - time) / (float) Logic.getUPDATE_MS();
 	}
 	public float calcSrvTck() {
 		return calcSrvTck(App.timeMs());
@@ -67,7 +66,7 @@ public Model(Gson json, Conf conf) {
 	client.connect(new Signal.Listener<ServerPayload>() {
 		public void onSignal(ServerPayload s) {
 			synchronized(this) {
-				sync = new Sync(s.tick + client.smartLatencyS / Logic.UPDATE_S, sync);
+				sync = new Sync(s.tick + client.smartLatencyS / Logic.getUPDATE_S(), sync);
 				if(s.welcome != null) playerId = s.welcome.id;
 				if(s.stable != null) {
 					if(s.stable.state != null) stable = new StateWrapper(s.stable.state, s.stable.tick);
@@ -121,7 +120,7 @@ public void action(com.n8cats.share.data.Action action) {
 		final int clientTick = (int) sync.calcClientTck();//todo +0.5f?
 		if(!ready()) return;
 		if(false) if(sync.calcSrvTck() - sync.calcClientTck() > Params.INSTANCE.getDELAY_TICKS() * 1.5 || sync.calcClientTck() - sync.calcSrvTck() > Params.INSTANCE.getFUTURE_TICKS() * 1.5) return;
-		int w = (int) (client.smartLatencyS / Logic.UPDATE_S + 1);//todo delta serverTick-clientTick
+		int w = (int) (client.smartLatencyS / Logic.getUPDATE_S() + 1);//todo delta serverTick-clientTick
 		ClientPayload.ClientAction a = new ClientPayload.ClientAction();
 		a.setAid(++previousActionId);
 		a.setWait(w);
