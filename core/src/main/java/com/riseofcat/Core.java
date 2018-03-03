@@ -104,7 +104,7 @@ public void render() {
 	State state = model.getDisplayState();
 	if(state != null) {
 		for(Car car : state.getCars()) {
-			if(car.getOwner().equals(model.playerId)) {
+			if(car.getOwner().equals(model.getPlayerId())) {
 				XY previous = getXY(viewport1.getCamera().position);
 				viewport1.getCamera().position.x = car.getPos().getX();
 				viewport1.getCamera().position.y = car.getPos().getY();
@@ -186,10 +186,10 @@ public void render() {
 	}
 	Resources.Font.loadedFont().draw(batch, "fps: " + Gdx.graphics.getFramesPerSecond(), 0, 150);
 	Resources.Font.loadedFont().draw(batch, model.getPlayerName(), 0, 200);
-	Resources.Font.loadedFont().draw(batch, "latency: " + (int) (model.client.latencyS * LibAllGwt.MILLIS_IN_SECCOND), 0, 250);
-	Resources.Font.loadedFont().draw(batch, "copyTime: " + model.copyTime, 0, 300);
-	Resources.Font.loadedFont().draw(batch, "tickTime: " + model.tickTime, 0, 350);
-	if(false)Resources.Font.loadedFont().draw(batch, "smart latency: " + (int) (model.client.smartLatencyS * LibAllGwt.MILLIS_IN_SECCOND), 0, 300);
+	Resources.Font.loadedFont().draw(batch, "latency: " + (int) (model.getClient().latencyS * LibAllGwt.MILLIS_IN_SECCOND), 0, 250);
+	Resources.Font.loadedFont().draw(batch, "copyTime: " + model.getCopyTime(), 0, 300);
+	Resources.Font.loadedFont().draw(batch, "tickTime: " + model.getTickTime(), 0, 350);
+	if(false)Resources.Font.loadedFont().draw(batch, "smart latency: " + (int) (model.getClient().smartLatencyS * LibAllGwt.MILLIS_IN_SECCOND), 0, 300);
 	if(TEST_TEXTURE) {
 		batch.draw(Resources.Textures.tank, viewport2.getWorldWidth()/2, viewport2.getWorldHeight()/2);
 		batch.draw(Resources.Textures.red, viewport2.getWorldWidth()/3, viewport2.getWorldHeight()/2);
