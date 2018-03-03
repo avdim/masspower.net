@@ -3,12 +3,8 @@ package com.riseofcat;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.utils.reflect.Field;
-import com.n8cats.lib_gwt.ILog;
-import com.n8cats.lib_gwt.LibAllGwt;
-
-import java.util.List;
-import java.util.Map;
+import com.riseofcat.lib_gwt.ILog;
+import com.riseofcat.lib_gwt.LibAllGwt;
 
 public class App {
 private static Long createMs;

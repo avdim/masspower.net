@@ -4,13 +4,13 @@ import com.github.czyzby.websocket.*
 import com.github.czyzby.websocket.data.WebSocketCloseCode
 import com.github.czyzby.websocket.data.WebSocketState
 import com.github.czyzby.websocket.net.ExtendedNet
-import com.n8cats.lib_gwt.LibAllGwt
-import com.n8cats.lib_gwt.Signal
-import com.n8cats.share.ClientSay
-import com.n8cats.share.Params
-import com.n8cats.share.ServerSay
-import fromJson
-import toJson
+import com.riseofcat.lib_gwt.LibAllGwt
+import com.riseofcat.lib_gwt.Signal
+import com.riseofcat.share.ClientSay
+import com.riseofcat.share.Params
+import com.riseofcat.share.ServerSay
+import com.riseofcat.common.fromJson
+import com.riseofcat.common.toJson
 
 import java.util.ArrayDeque
 import java.util.LinkedList
@@ -40,7 +40,7 @@ class PingClient<S,C>(host:String,port:Int,path:String) {
 
       override fun onMessage(webSocket:WebSocket?,packet:String):Boolean {
         if(false) App.log.info(packet)
-        val serverSay:ServerSay<S> = packet.fromJson()
+        val serverSay:ServerSay<S> = packet.fromJson<S>()
         if(serverSay.latency!=null) {
           latencyS = serverSay.latency!!/LibAllGwt.MILLIS_IN_SECCOND
           latencies.offer(LatencyTime(serverSay.latency!!,App.timeMs()))
@@ -108,7 +108,8 @@ class PingClient<S,C>(host:String,port:Int,path:String) {
     var attempt = 0
     while(attempt++<3) {//todo Костыль JSON сериализации
       try {
-        socket.send(say.toJson())
+        val toJson = say.toJson()
+        socket.send(toJson)
         return
       } catch(t:Throwable) {
       }

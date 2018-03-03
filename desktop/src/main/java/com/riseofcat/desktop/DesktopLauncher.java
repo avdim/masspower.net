@@ -3,7 +3,7 @@ package com.riseofcat.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.github.czyzby.websocket.CommonWebSockets;
-import com.n8cats.share.Params;
+import com.riseofcat.share.Params;
 import com.riseofcat.App;
 import com.riseofcat.Core;
 
@@ -23,14 +23,7 @@ public static void main(final String[] args) {
 }
 
 private static LwjglApplication createApplication() {
-	return new LwjglApplication(new Core(new App.Context() {
-		public <T> List<T> createConcurrentList() {
-			return new CopyOnWriteArrayList<>();
-		}
-		public <K, V> Map<K, V> createConcurrentHashMap() {
-			return new ConcurrentHashMap<>();
-		}
-	}), getDefaultConfiguration());
+	return new LwjglApplication(new Core(), getDefaultConfiguration());
 }
 
 private static LwjglApplicationConfiguration getDefaultConfiguration() {

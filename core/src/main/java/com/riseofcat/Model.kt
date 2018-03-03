@@ -1,22 +1,14 @@
 package com.riseofcat
 
-import com.n8cats.lib_gwt.*
-import com.n8cats.share.ClientPayload
-import com.n8cats.share.Params
-import com.n8cats.share.ServerPayload
-import com.n8cats.share.ShareTodo
-import com.n8cats.share.Tick
-import com.n8cats.share.TickActions
-import com.n8cats.share.data.Angle
-import com.n8cats.share.data.BigAction
-import com.n8cats.share.data.Car
-import com.n8cats.share.data.Logic
-import com.n8cats.share.data.PlayerAction
-import com.n8cats.share.data.PlayerId
-import com.n8cats.share.data.State
-import com.n8cats.share.data.XY
+import com.riseofcat.share.ClientPayload
+import com.riseofcat.share.Params
+import com.riseofcat.share.ServerPayload
+import com.riseofcat.share.ShareTodo
+import com.riseofcat.share.Tick
 import com.riseofcat.reflect.Conf
-import createConcurrentList
+import com.riseofcat.common.createConcurrentList
+import com.riseofcat.lib_gwt.*
+import com.riseofcat.share.data.*
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -27,7 +19,7 @@ class Model(conf:Conf) {
   @Deprecated("") var tickTime:Long = 0
   var playerId:PlayerId? = null
   private val actions = DefaultValueMap(HashMap<Tick,MutableList<BigAction>>(),{createConcurrentList()})
-  private val myActions = DefaultValueMap(HashMap<Tick,MutableList<Action>>(), {ArrayList()})
+  private val myActions = DefaultValueMap(HashMap<Tick,MutableList<Action>>(),{ArrayList()})
   private var stable:StateWrapper? = null
   private var sync:Sync? = null
   val playerName:String
@@ -115,7 +107,7 @@ class Model(conf:Conf) {
     return playerId!=null
   }
 
-  fun action(action:com.n8cats.share.data.Action) {
+  fun action(action:com.riseofcat.share.data.Action) {
     synchronized(this) {
       val clientTick = sync!!.calcClientTck().toInt()//todo +0.5f?
       if(!ready()) return
@@ -143,7 +135,7 @@ class Model(conf:Conf) {
     for((owner,_,_,pos1) in displayState.cars) {
       if(playerId==owner) {
         val direction = pos.sub(pos1).calcAngle().add(Angle.degreesAngle((0*180).toFloat()))
-        action(com.n8cats.share.data.Action(direction))
+        action(Action(direction))
         break
       }
     }
@@ -190,7 +182,7 @@ class Model(conf:Conf) {
     client.close()
   }
 
-  private inner class Action(val aid:Int,action:com.n8cats.share.data.Action):PlayerAction(playerId!!,action)
+  private inner class Action(val aid:Int,action:com.riseofcat.share.data.Action):PlayerAction(playerId!!,action)
   private inner class StateWrapper {
     var state:State
     var tick:Int = 0

@@ -19,15 +19,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.gson.Gson;
-import com.n8cats.lib_gwt.LibAllGwt;
-import com.n8cats.share.data.Car;
-import com.n8cats.share.data.Food;
-import com.n8cats.share.data.Reactive;
-import com.n8cats.share.data.State;
-import com.n8cats.share.data.XY;
+import com.riseofcat.lib_gwt.LibAllGwt;
+import com.riseofcat.share.data.Car;
+import com.riseofcat.share.data.Food;
+import com.riseofcat.share.data.Reactive;
+import com.riseofcat.share.data.State;
+import com.riseofcat.share.data.XY;
 import com.riseofcat.redundant.ShapeRenderer2;
-import com.riseofcat.reflect.Conf;
 
 public class Core extends ApplicationAdapter {
 private SpriteBatch batch;
@@ -74,7 +72,7 @@ public void create() {
 	stage = new Stage(viewport2/*, batch*/);
 	stage.addActor(new GradientShapeRect(200, 50));
 	stage.addActor(new Image(Resources.Textures.tank));
-	model = new Model(Gdx.files.internal("conf.json").readString().fromJson());
+	model = new Model(JavaCompatible.fromJson(Gdx.files.internal("conf.json").readString()));
 	batchShader = new ShaderProgram(defaultVertex, Gdx.files.internal("shader/good_blur.frag"));
 	if(!batchShader.isCompiled()) App.log.error(batchShader.getLog());
 	if(false) batch.setShader(batchShader);
@@ -185,10 +183,10 @@ public void render() {
 	}
 	Resources.Font.loadedFont().draw(batch, "fps: " + Gdx.graphics.getFramesPerSecond(), 0, 150);
 	Resources.Font.loadedFont().draw(batch, model.getPlayerName(), 0, 200);
-	Resources.Font.loadedFont().draw(batch, "latency: " + (int) (model.getClient().latencyS * LibAllGwt.MILLIS_IN_SECCOND), 0, 250);
+	Resources.Font.loadedFont().draw(batch, "latency: " + (int) (model.getClient().getLatencyS() * LibAllGwt.MILLIS_IN_SECCOND), 0, 250);
 	Resources.Font.loadedFont().draw(batch, "copyTime: " + model.getCopyTime(), 0, 300);
 	Resources.Font.loadedFont().draw(batch, "tickTime: " + model.getTickTime(), 0, 350);
-	if(false)Resources.Font.loadedFont().draw(batch, "smart latency: " + (int) (model.getClient().smartLatencyS * LibAllGwt.MILLIS_IN_SECCOND), 0, 300);
+	if(false)Resources.Font.loadedFont().draw(batch, "smart latency: " + (int) (model.getClient().getSmartLatencyS() * LibAllGwt.MILLIS_IN_SECCOND), 0, 300);
 	if(TEST_TEXTURE) {
 		batch.draw(Resources.Textures.tank, viewport2.getWorldWidth()/2, viewport2.getWorldHeight()/2);
 		batch.draw(Resources.Textures.red, viewport2.getWorldWidth()/3, viewport2.getWorldHeight()/2);
