@@ -8,10 +8,12 @@ after clone cd submodule-server and $git checkout master
   
 ##Desktop
 ./gradlew desktop:build    
-java -jar desktop/build/libs/mass-power.io-1.0.jar  
+java -jar desktop/build/libs/mass-power.io-1.1.jar  
   
 ##Html  
 ./gradlew clean :submodule-html:compileKotlin2Js --refresh-dependencies --offline  
   
   
+./gradlew heroku-jvm:shadowJar  #создаст файл heroku-jvm/build/libs/heroku-jvm-1.0-all.jar   
+java -jar submodule-server/heroku-jvm/build/libs/heroku-jvm-1.0-all.jar 
   

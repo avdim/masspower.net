@@ -7,7 +7,7 @@ plugins {
 }
 allprojects {
   group = "io.mass-power"
-  version = "1.0"
+  version = "1.1"//todo нужна ли версия всем проектам? Наверное только клиентам.
   if(false) {
     repositories {
       jcenter()
