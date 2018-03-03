@@ -8,6 +8,7 @@ import com.n8cats.share.Params;
 import com.n8cats.share.ServerPayload;
 import com.n8cats.share.ShareTodo;
 import com.n8cats.share.Tick;
+import com.n8cats.share.TickActions;
 import com.n8cats.share.data.Angle;
 import com.n8cats.share.data.BigAction;
 import com.n8cats.share.data.Car;
@@ -66,17 +67,17 @@ public Model(Gson json, Conf conf) {
 	client.connect(new Signal.Listener<ServerPayload>() {
 		public void onSignal(ServerPayload s) {
 			synchronized(this) {
-				sync = new Sync(s.tick + client.smartLatencyS / Logic.Companion.getUPDATE_S(), sync);
-				if(s.welcome != null) playerId = s.welcome.id;
-				if(s.stable != null) {
-					if(s.stable.state != null) stable = new StateWrapper(s.stable.state, s.stable.tick);
-					else stable.tick(s.stable.tick);
-					clearCache(s.stable.tick);
+				sync = new Sync(s.getTick() + client.smartLatencyS / Logic.Companion.getUPDATE_S(), sync);
+				if(s.getWelcome() != null) playerId = s.getWelcome().getId();
+				if(s.getStable() != null) {
+					if(s.getStable().getState() != null) stable = new StateWrapper(s.getStable().getState(), s.getStable().getTick());
+					else stable.tick(s.getStable().getTick());
+					clearCache(s.getStable().getTick());
 				}
-				if(s.actions != null && s.actions.size() > 0) {
-					for(ServerPayload.TickActions t : s.actions) {
-						actions.getExistsOrPutDefault(new Tick(t.tick)).addAll(t.list);
-						clearCache(t.tick + 1);
+				if(s.getActions() != null && s.getActions().size() > 0) {
+					for(TickActions t : s.getActions()) {
+						actions.getExistsOrPutDefault(new Tick(t.getTick())).addAll(t.getList());
+						clearCache(t.getTick() + 1);
 					}
 				}
 				for(Tick t : myActions.map.keySet()) {
@@ -84,17 +85,17 @@ public Model(Gson json, Conf conf) {
 					whl:
 					while(iterator.hasNext()) {
 						Action next = iterator.next();
-						if(s.canceled != null) {
-							if(s.canceled.contains(next.aid)) {
+						if(s.getCanceled() != null) {
+							if(s.getCanceled().contains(next.aid)) {
 								iterator.remove();
 								clearCache(t.getTick() + 1);
 								continue;
 							}
 						}
-						if(s.apply != null) {
-							for(ServerPayload.AppliedActions apply : s.apply) {
-								if(apply.aid == next.aid) {
-									if(!ShareTodo.INSTANCE.getSIMPLIFY()) actions.getExistsOrPutDefault(t.add(apply.delay)).add(new PlayerAction(playerId, next.getAction()).toBig());
+						if(s.getApply() != null) {
+							for(ServerPayload.AppliedActions apply : s.getApply()) {
+								if(apply.getAid() == next.aid) {
+									if(!ShareTodo.INSTANCE.getSIMPLIFY()) actions.getExistsOrPutDefault(t.add(apply.getDelay())).add(new PlayerAction(playerId, next.getAction()).toBig());
 									iterator.remove();
 									clearCache(t.getTick() + 1);
 									continue whl;
