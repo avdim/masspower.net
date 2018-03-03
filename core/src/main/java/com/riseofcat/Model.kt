@@ -1,14 +1,11 @@
 package com.riseofcat
 
-import com.riseofcat.share.ClientPayload
-import com.riseofcat.share.Params
-import com.riseofcat.share.ServerPayload
-import com.riseofcat.share.ShareTodo
-import com.riseofcat.share.Tick
 import com.riseofcat.reflect.Conf
 import com.riseofcat.common.createConcurrentList
 import com.riseofcat.lib_gwt.*
+import com.riseofcat.share.*
 import com.riseofcat.share.data.*
+import com.riseofcat.share.redundant.*
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -56,7 +53,12 @@ class Model(conf:Conf) {
   }
 
   init {
-    client = PingClient(conf.host,conf.port,"socket")
+    val temp:ServerSay<ServerPayload> = if(false) {
+      ServerSay()
+    } else {
+      ServerSayS() as ServerSay<ServerPayload>//todo костыль
+    }
+    client = PingClient(conf.host,conf.port,"socket", temp.javaClass.kotlin)
     client.connect(object:Signal.Listener<ServerPayload> {
       override fun onSignal(s:ServerPayload) {
         synchronized(this) {

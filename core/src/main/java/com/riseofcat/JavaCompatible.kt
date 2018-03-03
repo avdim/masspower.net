@@ -14,7 +14,7 @@ class JavaCompatible {
 
     @JvmStatic
     fun fromJson(str:String):Conf {
-      return str.fromJson()
+      return str.fromJson(Conf::class)
     }
   }
 
