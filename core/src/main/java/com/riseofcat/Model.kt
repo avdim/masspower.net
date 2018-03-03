@@ -1,9 +1,6 @@
 package com.riseofcat
 
-import com.google.gson.Gson
-import com.n8cats.lib_gwt.DefaultValueMap
-import com.n8cats.lib_gwt.LibAllGwt
-import com.n8cats.lib_gwt.Signal
+import com.n8cats.lib_gwt.*
 import com.n8cats.share.ClientPayload
 import com.n8cats.share.Params
 import com.n8cats.share.ServerPayload
@@ -18,19 +15,19 @@ import com.n8cats.share.data.PlayerAction
 import com.n8cats.share.data.PlayerId
 import com.n8cats.share.data.State
 import com.n8cats.share.data.XY
-import com.n8cats.share.redundant.ServerSayS
 import com.riseofcat.reflect.Conf
+import createConcurrentList
 
 import java.util.ArrayList
 import java.util.HashMap
 
-class Model(json:Gson,conf:Conf) {
+class Model(conf:Conf) {
   val client:PingClient<ServerPayload,ClientPayload>
   @Deprecated("") var copyTime:Long = 0
   @Deprecated("") var tickTime:Long = 0
   var playerId:PlayerId? = null
-  private val actions = DefaultValueMap(HashMap<Tick,List<BigAction>>(),DefaultValueMap.ICreateNew {App.context.createConcurrentList()})
-  private val myActions = DefaultValueMap(HashMap<Tick,List<Action>>(),DefaultValueMap.ICreateNew {ArrayList()})
+  private val actions = DefaultValueMap(HashMap<Tick,MutableList<BigAction>>(),{createConcurrentList()})
+  private val myActions = DefaultValueMap(HashMap<Tick,MutableList<Action>>(), {ArrayList()})
   private var stable:StateWrapper? = null
   private var sync:Sync? = null
   val playerName:String
@@ -67,7 +64,7 @@ class Model(json:Gson,conf:Conf) {
   }
 
   init {
-    client = PingClient(json,conf.host,conf.port,"socket",ServerSayS::class.java)
+    client = PingClient(conf.host,conf.port,"socket")
     client.connect(object:Signal.Listener<ServerPayload> {
       override fun onSignal(s:ServerPayload) {
         synchronized(this) {
@@ -75,19 +72,19 @@ class Model(json:Gson,conf:Conf) {
           if(s.welcome!=null) playerId = s.welcome!!.id
           if(s.stable!=null) {
             if(s.stable!!.state!=null)
-              stable = StateWrapper(s.stable!!.state,s.stable!!.tick)
+              stable = StateWrapper(s.stable!!.state!!,s.stable!!.tick)
             else
               stable!!.tick(s.stable!!.tick)
             clearCache(s.stable!!.tick)
           }
-          if(s.actions!=null&&s.actions!!.size()>0) {
+          if(s.actions!=null&&s.actions!!.size>0) {
             for(t in s.actions!!) {
               actions.getExistsOrPutDefault(Tick(t.tick)).addAll(t.list)
               clearCache(t.tick+1)
             }
           }
           for(t in myActions.map.keys) {
-            val iterator = myActions.map[t].iterator()
+            val iterator = myActions.map[t]!!.iterator()
             whl@ while(iterator.hasNext()) {
               val next = iterator.next()
               if(s.canceled!=null) {
@@ -130,7 +127,7 @@ class Model(json:Gson,conf:Conf) {
       a.tick = clientTick+w//todo serverTick?
       a.action = action
       synchronized(myActions) {
-        myActions.getExistsOrPutDefault(Tick(clientTick+w)).add(Action(a.aid,a.action))
+        myActions.getExistsOrPutDefault(Tick(clientTick+w)).add(Action(a.aid,a.action!!))
       }
       val payload = ClientPayload()
       payload.tick = clientTick
@@ -180,7 +177,7 @@ class Model(json:Gson,conf:Conf) {
       if(stable==null) return null
       synchronized(this) {
         result = StateWrapper(stable!!)
-        saveCache(result)
+        saveCache(result!!)
       }
       t = App.timeMs()
     }
@@ -193,7 +190,7 @@ class Model(json:Gson,conf:Conf) {
     client.close()
   }
 
-  private inner class Action(val aid:Int,action:com.n8cats.share.data.Action):PlayerAction(playerId,action)
+  private inner class Action(val aid:Int,action:com.n8cats.share.data.Action):PlayerAction(playerId!!,action)
   private inner class StateWrapper {
     var state:State
     var tick:Int = 0

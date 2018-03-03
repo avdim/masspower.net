@@ -12,7 +12,6 @@ import java.util.Map;
 
 public class App {
 private static Long createMs;
-public static Context context;
 static {
 
 }
@@ -54,8 +53,5 @@ public static int sinceStartMs() {
 public static void breakpoint() {
 	int a = 1+1;
 }
-public interface Context {
-	<T>List<T> createConcurrentList();
-	<K,V> Map<K,V> createConcurrentHashMap();
-}
+
 }

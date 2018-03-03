@@ -1,24 +1,21 @@
 package com.riseofcat
 
-import com.badlogic.gdx.utils.Json
-import com.github.czyzby.websocket.WebSocket
-import com.github.czyzby.websocket.WebSocketAdapter
-import com.github.czyzby.websocket.WebSockets
+import com.github.czyzby.websocket.*
 import com.github.czyzby.websocket.data.WebSocketCloseCode
 import com.github.czyzby.websocket.data.WebSocketState
 import com.github.czyzby.websocket.net.ExtendedNet
-import com.google.gson.Gson
 import com.n8cats.lib_gwt.LibAllGwt
 import com.n8cats.lib_gwt.Signal
 import com.n8cats.share.ClientSay
 import com.n8cats.share.Params
 import com.n8cats.share.ServerSay
+import fromJson
+import toJson
 
 import java.util.ArrayDeque
 import java.util.LinkedList
-import java.util.Queue
 
-class PingClient<S,C>(private val json:Gson,host:String,port:Int,path:String,typeS:Class<ServerSay<S>>) {
+class PingClient<S,C>(host:String,port:Int,path:String) {
   private val incoming = Signal<S>()
   private val socket:WebSocket
   private val queue = LinkedList<ClientSay<C>>()//todo test
@@ -41,9 +38,9 @@ class PingClient<S,C>(private val json:Gson,host:String,port:Int,path:String,typ
         return WebSocketListener.FULLY_HANDLED
       }
 
-      override fun onMessage(webSocket:WebSocket?,packet:String?):Boolean {
+      override fun onMessage(webSocket:WebSocket?,packet:String):Boolean {
         if(false) App.log.info(packet)
-        val serverSay = json.fromJson(packet,typeS)
+        val serverSay:ServerSay<S> = packet.fromJson()
         if(serverSay.latency!=null) {
           latencyS = serverSay.latency!!/LibAllGwt.MILLIS_IN_SECCOND
           latencies.offer(LatencyTime(serverSay.latency!!,App.timeMs()))
@@ -111,7 +108,7 @@ class PingClient<S,C>(private val json:Gson,host:String,port:Int,path:String,typ
     var attempt = 0
     while(attempt++<3) {//todo Костыль JSON сериализации
       try {
-        socket.send(json.toJson(say))
+        socket.send(say.toJson())
         return
       } catch(t:Throwable) {
       }

@@ -46,8 +46,8 @@ private ShaderProgram backgroundBatchShader;
 private ShaderProgram batchShader;
 private Mesh mesh;
 private ShaderProgram meshShader;
-public Core(App.Context context) {
-	App.context = context;
+public Core() {
+
 }
 public void create() {
 	final FileHandle defaultVertex = Gdx.files.internal("shader/default_vertex_shader.vert");
@@ -74,8 +74,7 @@ public void create() {
 	stage = new Stage(viewport2/*, batch*/);
 	stage.addActor(new GradientShapeRect(200, 50));
 	stage.addActor(new Image(Resources.Textures.tank));
-	Gson json = new Gson();
-	model = new Model(json, json.fromJson(Gdx.files.internal("conf.json").readString(), Conf.class));
+	model = new Model(Gdx.files.internal("conf.json").readString().fromJson());
 	batchShader = new ShaderProgram(defaultVertex, Gdx.files.internal("shader/good_blur.frag"));
 	if(!batchShader.isCompiled()) App.log.error(batchShader.getLog());
 	if(false) batch.setShader(batchShader);
