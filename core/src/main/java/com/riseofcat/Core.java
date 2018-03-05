@@ -75,7 +75,7 @@ public void create() {
 	stage.addActor(new GradientShapeRect(200, 50));
 	stage.addActor(new Image(Resources.Textures.tank));
 	String str = Gdx.files.internal("conf.json").readString();
-	Conf conf = JavaCompatible.fromJson(str);
+	Conf conf = CommonJava.fromJson(str, Conf.class);
 	model = new Model(new Gson(), conf);
 	batchShader = new ShaderProgram(defaultVertex, Gdx.files.internal("shader/good_blur.frag"));
 	if(!batchShader.isCompiled()) App.log.error(batchShader.getLog());

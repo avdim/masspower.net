@@ -10,8 +10,6 @@ import com.riseofcat.lib_gwt.Signal
 import com.riseofcat.share.ClientSay
 import com.riseofcat.share.Params
 import com.riseofcat.share.ServerSay
-import com.riseofcat.common.fromJson
-import com.riseofcat.common.toJson
 
 import java.util.ArrayDeque
 import java.util.LinkedList

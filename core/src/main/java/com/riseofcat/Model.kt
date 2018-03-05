@@ -20,7 +20,7 @@ class Model(json:Gson,conf:Conf) {
   @Deprecated("") var copyTime:Long = 0
   @Deprecated("") var tickTime:Long = 0
   var playerId:PlayerId? = null
-  private val actions = DefaultValueMap(HashMap<Tick,MutableList<BigAction>>(),{createConcurrentList()})
+  private val actions = DefaultValueMap(HashMap<Tick,MutableList<BigAction>>(),{Common.createConcurrentList()})
   private val myActions = DefaultValueMap(HashMap<Tick,MutableList<Action>>(),{ArrayList()})
   private var stable:StateWrapper? = null
   private var sync:Sync? = null
