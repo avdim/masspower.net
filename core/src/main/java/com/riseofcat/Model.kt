@@ -1,6 +1,7 @@
 package com.riseofcat
 
 import com.riseofcat.common.*
+import com.riseofcat.lib.*
 import com.riseofcat.lib_gwt.*
 import com.riseofcat.redundant.*
 import com.riseofcat.reflect.*

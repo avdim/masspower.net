@@ -4,7 +4,7 @@ import com.github.czyzby.websocket.*
 import com.github.czyzby.websocket.data.*
 import com.github.czyzby.websocket.net.*
 import com.riseofcat.common.*
-import com.riseofcat.lib_gwt.*
+import com.riseofcat.lib.*
 import com.riseofcat.share.*
 import java.util.*
 import kotlin.reflect.*
@@ -21,7 +21,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
 
   init {
     latencies.add(LatencyTime(Params.DEFAULT_LATENCY_MS,App.timeMs()))
-    socket = if(LibAllGwt.TRUE()) ExtendedNet.getNet().newWebSocket(host,port,path) else WebSockets.newSocket(WebSockets.toWebSocketUrl(host,port,path))
+    socket = if(true) ExtendedNet.getNet().newWebSocket(host,port,path) else WebSockets.newSocket(WebSockets.toWebSocketUrl(host,port,path))
     socket.addListener(object:WebSocketAdapter() {
       override fun onOpen(webSocket:WebSocket?):Boolean {
         while(queue.peek()!=null) sayNow(queue.poll())
@@ -36,26 +36,26 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
         if(false) App.log.info(packet)
         val serverSay = Common.fromJson(packet,typeS)
         if(serverSay.latency!=null) {
-          latencyS = serverSay.latency!!/LibAllGwt.MILLIS_IN_SECCOND
+          latencyS = serverSay.latency!!/Lib.Const.MILLIS_IN_SECOND
           latencies.offer(LatencyTime(serverSay.latency!!,App.timeMs()))
           while(latencies.size>100) latencies.poll()
           var sum = 0f
           var weights = 0f
           val time = App.timeMs()
           for(l in latencies) {
-            var w = (1-LibAllGwt.Fun.arg0toInf((time-l.time).toDouble(),10000f)).toDouble()
-            w *= (1-LibAllGwt.Fun.arg0toInf(l.latency.toDouble(),Params.DEFAULT_LATENCY_MS.toFloat())).toDouble()
+            var w = (1-Lib.Fun.arg0toInf((time-l.time).toDouble(),10000f)).toDouble()
+            w *= (1-Lib.Fun.arg0toInf(l.latency.toDouble(),Params.DEFAULT_LATENCY_MS.toFloat())).toDouble()
             sum += (w*l.latency).toFloat()
             weights += w.toFloat()
           }
-          if(weights>java.lang.Float.MIN_VALUE*1E10) smartLatencyS = sum/weights/LibAllGwt.MILLIS_IN_SECCOND
+          if(weights>java.lang.Float.MIN_VALUE*1E10) smartLatencyS = sum/weights/Lib.Const.MILLIS_IN_SECOND
         }
         if(serverSay.ping) {
           val answer = ClientSay<C>()
           answer.pong = true
           say(answer)
         }
-        if(serverSay.payload!=null) incoming.dispatch(serverSay.payload)
+        if(serverSay.payload!=null) incoming.dispatch(serverSay.payload!!)
         return WebSocketListener.FULLY_HANDLED
       }
 
