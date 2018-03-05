@@ -1,33 +1,17 @@
 package com.riseofcat
 
-import com.badlogic.gdx.ApplicationAdapter
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputAdapter
-import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Mesh
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.VertexAttribute
-import com.badlogic.gdx.graphics.VertexAttributes
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.glutils.ShaderProgram
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.badlogic.gdx.utils.viewport.Viewport
-import com.google.gson.Gson
-import com.riseofcat.lib_gwt.LibAllGwt
-import com.riseofcat.reflect.Conf
-import com.riseofcat.share.data.Car
-import com.riseofcat.share.data.Food
-import com.riseofcat.share.data.Reactive
-import com.riseofcat.share.data.State
-import com.riseofcat.share.data.XY
-import com.riseofcat.redundant.ShapeRenderer2
+import com.badlogic.gdx.*
+import com.badlogic.gdx.graphics.*
+import com.badlogic.gdx.graphics.g2d.*
+import com.badlogic.gdx.graphics.glutils.*
+import com.badlogic.gdx.math.*
+import com.badlogic.gdx.scenes.scene2d.*
+import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.utils.viewport.*
+import com.riseofcat.lib_gwt.*
+import com.riseofcat.redundant.*
+import com.riseofcat.reflect.*
+import com.riseofcat.share.data.*
 
 class Core:ApplicationAdapter() {
   private var batch:SpriteBatch? = null
@@ -71,7 +55,7 @@ class Core:ApplicationAdapter() {
     stage!!.addActor(Image(Resources.Textures.tank))
     val str = Gdx.files.internal("conf.json").readString()
     val conf = CommonJava.fromJson(str,Conf::class.java)
-    model = Model(Gson(),conf)
+    model = Model(conf)
     batchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/good_blur.frag"))
     if(!batchShader!!.isCompiled) App.log.error(batchShader!!.log)
     if(false) batch!!.shader = batchShader

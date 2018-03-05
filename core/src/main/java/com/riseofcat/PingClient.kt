@@ -5,6 +5,7 @@ import com.github.czyzby.websocket.data.WebSocketCloseCode
 import com.github.czyzby.websocket.data.WebSocketState
 import com.github.czyzby.websocket.net.ExtendedNet
 import com.google.gson.*
+import com.riseofcat.common.*
 import com.riseofcat.lib_gwt.LibAllGwt
 import com.riseofcat.lib_gwt.Signal
 import com.riseofcat.share.ClientSay
@@ -15,7 +16,7 @@ import java.util.ArrayDeque
 import java.util.LinkedList
 import kotlin.reflect.*
 
-class PingClient<S:Any,C>(private val json:Gson,host:String,port:Int,path:String,typeS:KClass<ServerSay<S>>) {
+class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSay<S>>) {
   private val incoming = Signal<S>()
   private val socket:WebSocket
   private val queue = LinkedList<ClientSay<C>>()//todo test
@@ -40,7 +41,7 @@ class PingClient<S:Any,C>(private val json:Gson,host:String,port:Int,path:String
 
       override fun onMessage(webSocket:WebSocket?,packet:String):Boolean {
         if(false) App.log.info(packet)
-        val serverSay = json.fromJson(packet,typeS.java)
+        val serverSay = CommonJava.fromJson(packet,typeS.java)
         if(serverSay.latency!=null) {
           latencyS = serverSay.latency!!/LibAllGwt.MILLIS_IN_SECCOND
           latencies.offer(LatencyTime(serverSay.latency!!,App.timeMs()))
@@ -108,7 +109,7 @@ class PingClient<S:Any,C>(private val json:Gson,host:String,port:Int,path:String
     var attempt = 0
     while(attempt++<3) {//todo Костыль JSON сериализации
       try {
-        socket.send(json.toJson(say))
+        socket.send(Common.toJson(say))
         return
       } catch(t:Throwable) {
       }

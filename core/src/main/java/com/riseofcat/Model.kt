@@ -1,21 +1,15 @@
 package com.riseofcat
 
-import com.google.gson.*
 import com.riseofcat.common.*
-import com.riseofcat.reflect.Conf
 import com.riseofcat.lib_gwt.*
 import com.riseofcat.redundant.*
+import com.riseofcat.reflect.*
 import com.riseofcat.share.*
 import com.riseofcat.share.data.*
-import com.riseofcat.share.redundant.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 import kotlin.reflect.*
 
-class Model(json:Gson,conf:Conf) {
+class Model(conf:Conf) {
   val client:PingClient<ServerPayload,ClientPayload>
   @Deprecated("") var copyTime:Long = 0
   @Deprecated("") var tickTime:Long = 0
@@ -62,7 +56,7 @@ class Model(json:Gson,conf:Conf) {
   }
 
   init {
-    client = PingClient(json,conf.host,conf.port,"socket",getKClass<ServerSayS>() as KClass<ServerSay<ServerPayload>>)
+    client = PingClient(conf.host,conf.port,"socket",getKClass<ServerSayS>() as KClass<ServerSay<ServerPayload>>)
     client.connect(object:Signal.Listener<ServerPayload> {
       override fun onSignal(s:ServerPayload) {
         synchronized(this) {
