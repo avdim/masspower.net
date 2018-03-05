@@ -1,14 +1,18 @@
 package com.riseofcat
 
+import com.riseofcat.common.*
 import com.riseofcat.reflect.Conf
-import com.riseofcat.common.createConcurrentList
 import com.riseofcat.lib_gwt.*
+import com.riseofcat.redundant.*
 import com.riseofcat.share.*
 import com.riseofcat.share.data.*
 import com.riseofcat.share.redundant.*
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
 import java.util.ArrayList
 import java.util.HashMap
+import kotlin.reflect.*
 
 class Model(conf:Conf) {
   val client:PingClient<ServerPayload,ClientPayload>
@@ -52,13 +56,22 @@ class Model(conf:Conf) {
     }
   }
 
+  inline fun <reified T:Any>getKClass():KClass<T> {
+    return T::class
+  }
+
   init {
-    val temp:ServerSay<ServerPayload> = if(false) {
-      ServerSay()
-    } else {
-      ServerSayS() as ServerSay<ServerPayload>//todo костыль
-    }
-    client = PingClient(conf.host,conf.port,"socket", temp.javaClass.kotlin)
+    client = PingClient(conf.host,conf.port,"socket", {
+      val kClass = getKClass<ServerSayS>()
+      val typeParameters = kClass.typeParameters
+      val members = kClass.members
+      if(false)kClass.serializer()//exception
+      val parse = JSON.parse<ServerSayS>(it)
+      parse as ServerSay<ServerPayload>
+//      val fromJson = it.fromJson<ServerSay<ServerPayload>>()
+//      println("parsed")
+//      fromJson
+    })
     client.connect(object:Signal.Listener<ServerPayload> {
       override fun onSignal(s:ServerPayload) {
         synchronized(this) {

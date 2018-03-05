@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.riseofcat.lib_gwt.LibAllGwt;
+import com.riseofcat.reflect.Conf;
 import com.riseofcat.share.data.Car;
 import com.riseofcat.share.data.Food;
 import com.riseofcat.share.data.Reactive;
@@ -72,7 +73,9 @@ public void create() {
 	stage = new Stage(viewport2/*, batch*/);
 	stage.addActor(new GradientShapeRect(200, 50));
 	stage.addActor(new Image(Resources.Textures.tank));
-	model = new Model(JavaCompatible.fromJson(Gdx.files.internal("conf.json").readString()));
+	String str = Gdx.files.internal("conf.json").readString();
+	Conf conf = JavaCompatible.fromJson(str);
+	model = new Model(conf);
 	batchShader = new ShaderProgram(defaultVertex, Gdx.files.internal("shader/good_blur.frag"));
 	if(!batchShader.isCompiled()) App.log.error(batchShader.getLog());
 	if(false) batch.setShader(batchShader);

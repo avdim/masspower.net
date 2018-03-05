@@ -6,6 +6,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 ext.appName = 'mass-power.io'//power-mass.io,react-mass.io
 
 repositories {
+  maven { url "https://kotlin.bintray.com/kotlinx" }
   mavenCentral()
   jcenter()
   maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }

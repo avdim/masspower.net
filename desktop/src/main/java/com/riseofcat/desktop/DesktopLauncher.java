@@ -6,6 +6,7 @@ import com.github.czyzby.websocket.CommonWebSockets;
 import com.riseofcat.share.Params;
 import com.riseofcat.App;
 import com.riseofcat.Core;
+import com.riseofcat.test.TestJson;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ public static void main(final String[] args) {
 }
 
 private static LwjglApplication createApplication() {
+	TestJson.Companion.testJson();
 	return new LwjglApplication(new Core(), getDefaultConfiguration());
 }
 
