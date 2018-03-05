@@ -6,16 +6,15 @@ import com.github.czyzby.websocket.net.*
 import com.riseofcat.common.*
 import com.riseofcat.lib.*
 import com.riseofcat.share.*
-import java.util.*
 import kotlin.reflect.*
 
 class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSay<S>>) {
   private val incoming = Signal<S>()
   private val socket:WebSocket
-  private val queue = LinkedList<ClientSay<C>>()//todo test
+  private val queue:MutableList<ClientSay<C>> = mutableListOf()//todo test
   var smartLatencyS = Params.DEFAULT_LATENCY_S
   var latencyS = Params.DEFAULT_LATENCY_S
-  private val latencies = ArrayDeque<LatencyTime>()
+  private val latencies:MutableList<LatencyTime> = mutableListOf()
   val state:WebSocketState
     get() = socket.state
 
@@ -24,7 +23,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
     socket = if(true) ExtendedNet.getNet().newWebSocket(host,port,path) else WebSockets.newSocket(WebSockets.toWebSocketUrl(host,port,path))
     socket.addListener(object:WebSocketAdapter() {
       override fun onOpen(webSocket:WebSocket?):Boolean {
-        while(queue.peek()!=null) sayNow(queue.poll())
+        while(queue.isNotEmpty()) sayNow(queue.removeFirst())
         return WebSocketListener.FULLY_HANDLED
       }
 
@@ -37,8 +36,8 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
         val serverSay = Common.fromJson(packet,typeS)
         if(serverSay.latency!=null) {
           latencyS = serverSay.latency!!/Lib.Const.MILLIS_IN_SECOND
-          latencies.offer(LatencyTime(serverSay.latency!!,App.timeMs()))
-          while(latencies.size>100) latencies.poll()
+          latencies.add(LatencyTime(serverSay.latency!!,App.timeMs()))
+          while(latencies.size>100) latencies.removeFirst()
           var sum = 0f
           var weights = 0f
           val time = App.timeMs()
@@ -95,7 +94,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
     if(socket.state==WebSocketState.OPEN)
       sayNow(say)
     else
-      queue.offer(say)
+      queue.add(say)
   }
 
   private fun sayNow(say:ClientSay<C>) {
