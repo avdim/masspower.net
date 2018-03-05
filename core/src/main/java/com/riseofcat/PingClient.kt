@@ -1,19 +1,12 @@
 package com.riseofcat
 
 import com.github.czyzby.websocket.*
-import com.github.czyzby.websocket.data.WebSocketCloseCode
-import com.github.czyzby.websocket.data.WebSocketState
-import com.github.czyzby.websocket.net.ExtendedNet
-import com.google.gson.*
+import com.github.czyzby.websocket.data.*
+import com.github.czyzby.websocket.net.*
 import com.riseofcat.common.*
-import com.riseofcat.lib_gwt.LibAllGwt
-import com.riseofcat.lib_gwt.Signal
-import com.riseofcat.share.ClientSay
-import com.riseofcat.share.Params
-import com.riseofcat.share.ServerSay
-
-import java.util.ArrayDeque
-import java.util.LinkedList
+import com.riseofcat.lib_gwt.*
+import com.riseofcat.share.*
+import java.util.*
 import kotlin.reflect.*
 
 class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSay<S>>) {
