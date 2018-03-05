@@ -4,6 +4,7 @@ import com.github.czyzby.websocket.*
 import com.github.czyzby.websocket.data.WebSocketCloseCode
 import com.github.czyzby.websocket.data.WebSocketState
 import com.github.czyzby.websocket.net.ExtendedNet
+import com.google.gson.*
 import com.riseofcat.lib_gwt.LibAllGwt
 import com.riseofcat.lib_gwt.Signal
 import com.riseofcat.share.ClientSay
@@ -16,7 +17,7 @@ import java.util.ArrayDeque
 import java.util.LinkedList
 import kotlin.reflect.*
 
-class PingClient<S:Any,C>(host:String,port:Int,path:String, val funJsonParse:(String)->ServerSay<S>) {
+class PingClient<S:Any,C>(private val json:Gson,host:String,port:Int,path:String,typeS:KClass<ServerSay<S>>) {
   private val incoming = Signal<S>()
   private val socket:WebSocket
   private val queue = LinkedList<ClientSay<C>>()//todo test
@@ -41,7 +42,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String, val funJsonParse:(St
 
       override fun onMessage(webSocket:WebSocket?,packet:String):Boolean {
         if(false) App.log.info(packet)
-        val serverSay:ServerSay<S> = funJsonParse(packet)//packet.fromJson(typeS)
+        val serverSay = json.fromJson(packet,typeS.java)
         if(serverSay.latency!=null) {
           latencyS = serverSay.latency!!/LibAllGwt.MILLIS_IN_SECCOND
           latencies.offer(LatencyTime(serverSay.latency!!,App.timeMs()))
@@ -109,8 +110,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String, val funJsonParse:(St
     var attempt = 0
     while(attempt++<3) {//todo Костыль JSON сериализации
       try {
-        val toJson = say.toJson()
-        socket.send(toJson)
+        socket.send(json.toJson(say))
         return
       } catch(t:Throwable) {
       }
