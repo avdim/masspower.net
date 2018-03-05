@@ -34,7 +34,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
 
       override fun onMessage(webSocket:WebSocket?,packet:String):Boolean {
         if(false) App.log.info(packet)
-        val serverSay = CommonJava.fromJson(packet,typeS.java)
+        val serverSay = Common.fromJson(packet,typeS)
         if(serverSay.latency!=null) {
           latencyS = serverSay.latency!!/LibAllGwt.MILLIS_IN_SECCOND
           latencies.offer(LatencyTime(serverSay.latency!!,App.timeMs()))

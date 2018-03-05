@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.*
 import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.*
+import com.riseofcat.common.*
 import com.riseofcat.lib_gwt.*
 import com.riseofcat.redundant.*
 import com.riseofcat.reflect.*
@@ -54,7 +55,7 @@ class Core:ApplicationAdapter() {
     stage!!.addActor(GradientShapeRect(200,50))
     stage!!.addActor(Image(Resources.Textures.tank))
     val str = Gdx.files.internal("conf.json").readString()
-    val conf = CommonJava.fromJson(str,Conf::class.java)
+    val conf = Common.fromJson(str,Conf::class)
     model = Model(conf)
     batchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/good_blur.frag"))
     if(!batchShader!!.isCompiled) App.log.error(batchShader!!.log)
