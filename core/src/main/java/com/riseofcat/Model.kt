@@ -1,5 +1,6 @@
 package com.riseofcat
 
+import com.riseofcat.client.PingClient
 import com.riseofcat.common.*
 import com.riseofcat.lib.*
 import com.riseofcat.lib_gwt.*
