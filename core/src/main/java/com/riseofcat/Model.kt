@@ -1,11 +1,10 @@
 package com.riseofcat
 
+import com.riseofcat.client.Conf
 import com.riseofcat.client.PingClient
 import com.riseofcat.common.*
 import com.riseofcat.lib.*
-import com.riseofcat.lib_gwt.*
 import com.riseofcat.redundant.*
-import com.riseofcat.reflect.*
 import com.riseofcat.share.*
 import com.riseofcat.share.data.*
 import java.util.*
@@ -32,7 +31,7 @@ class Model(conf:Conf) {
     internal val time:Long
 
     init {
-      time = App.timeMs()
+      time = Common.timeMs
       if(oldSync==null)
         this.clientTick = serverTick
       else
@@ -44,12 +43,12 @@ class Model(conf:Conf) {
     }
 
     fun calcSrvTck():Float {
-      return calcSrvTck(App.timeMs())
+      return calcSrvTck(Common.timeMs)
     }
 
     fun calcClientTck():Float {
-      val t = App.timeMs()
-      return calcSrvTck(t)+(clientTick-serverTick)*(1f-LibAllGwt.Fun.arg0toInf((t-time).toDouble(),600f))
+      val t = Common.timeMs
+      return calcSrvTck(t)+(clientTick-serverTick)*(1f-Lib.Fun.arg0toInf((t-time).toDouble(),600f))
     }
   }
 
@@ -173,10 +172,10 @@ class Model(conf:Conf) {
         result = StateWrapper(stable!!)
         saveCache(result!!)
       }
-      t = App.timeMs()
+      t = Common.timeMs
     }
     result!!.tick(tick)
-    if(t!=null) tickTime += App.timeMs()-t
+    if(t!=null) tickTime += Common.timeMs-t
     return result!!.state
   }
 
@@ -195,9 +194,9 @@ class Model(conf:Conf) {
     }
 
     constructor(obj:StateWrapper) {
-      val t = App.timeMs()
+      val t = Common.timeMs
       state = obj.state.copy2()
-      copyTime += App.timeMs()-t
+      copyTime += Common.timeMs-t
       this.tick = obj.tick
     }
 

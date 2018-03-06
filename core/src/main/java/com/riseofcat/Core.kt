@@ -8,10 +8,10 @@ import com.badlogic.gdx.math.*
 import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.*
+import com.riseofcat.client.Conf
 import com.riseofcat.common.*
-import com.riseofcat.lib_gwt.*
+import com.riseofcat.lib.*
 import com.riseofcat.redundant.*
-import com.riseofcat.reflect.*
 import com.riseofcat.share.data.*
 
 class Core:ApplicationAdapter() {
@@ -82,7 +82,7 @@ class Core:ApplicationAdapter() {
   }
 
   override fun render() {
-    val TEST_TEXTURE = LibAllGwt.FALSE()
+    val TEST_TEXTURE = false
     model!!.update(Gdx.graphics.deltaTime)
     val state = model!!.displayState
     if(state!=null) {
@@ -117,7 +117,7 @@ class Core:ApplicationAdapter() {
       if(false) Gdx.gl.glFinish()//save fps
     }
     if(TEST_TEXTURE) {
-      if(LibAllGwt.FALSE()) stage!!.viewport.apply()
+      if(false) stage!!.viewport.apply()
       stage!!.act(/*Gdx.graphics.getDeltaTime()*/)
       stage!!.draw()
     }
@@ -179,10 +179,10 @@ class Core:ApplicationAdapter() {
     }
     Resources.Font.loadedFont().draw(batch,"fps: "+Gdx.graphics.framesPerSecond,0f,150f)
     Resources.Font.loadedFont().draw(batch,model!!.playerName,0f,200f)
-    Resources.Font.loadedFont().draw(batch,"latency: "+(model!!.client.latencyS*LibAllGwt.MILLIS_IN_SECCOND).toInt(),0f,250f)
+    Resources.Font.loadedFont().draw(batch,"latency: "+(model!!.client.latencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,250f)
     Resources.Font.loadedFont().draw(batch,"copyTime: "+model!!.copyTime,0f,300f)
     Resources.Font.loadedFont().draw(batch,"tickTime: "+model!!.tickTime,0f,350f)
-    if(false) Resources.Font.loadedFont().draw(batch,"smart latency: "+(model!!.client.smartLatencyS*LibAllGwt.MILLIS_IN_SECCOND).toInt(),0f,300f)
+    if(false) Resources.Font.loadedFont().draw(batch,"smart latency: "+(model!!.client.smartLatencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,300f)
     if(TEST_TEXTURE) {
       batch!!.draw(Resources.Textures.tank,viewport2!!.worldWidth/2,viewport2!!.worldHeight/2)
       batch!!.draw(Resources.Textures.red,viewport2!!.worldWidth/3,viewport2!!.worldHeight/2)
