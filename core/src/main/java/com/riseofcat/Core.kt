@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.*
 import com.riseofcat.client.Conf
+import com.riseofcat.client.Model
 import com.riseofcat.common.*
 import com.riseofcat.lib.*
 import com.riseofcat.redundant.*
