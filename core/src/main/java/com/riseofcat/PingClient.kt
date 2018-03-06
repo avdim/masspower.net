@@ -14,7 +14,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
   private val latencies:MutableList<LatencyTime> = mutableListOf()
 
   init {
-    latencies.add(LatencyTime(Params.DEFAULT_LATENCY_MS,App.timeMs()))
+    latencies.add(LatencyTime(Params.DEFAULT_LATENCY_MS,Common.timeMs))
     socket = Common.createWebSocket(host,port,path)
     socket.addListener(object:LibWebSocket.Listener {
       override fun onOpen() {
@@ -26,15 +26,15 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
       }
 
       override fun onMessage(packet:String) {
-        if(false) App.log.info(packet)
         val serverSay = Common.fromJson(packet,typeS)
         if(serverSay.latency!=null) {
           latencyS = serverSay.latency!!/Lib.Const.MILLIS_IN_SECOND
-          latencies.add(LatencyTime(serverSay.latency!!,App.timeMs()))
+
+          latencies.add(LatencyTime(serverSay.latency!!,Common.timeMs))
           while(latencies.size>100) latencies.removeFirst()
           var sum = 0f
           var weights = 0f
-          val time = App.timeMs()
+          val time = Common.timeMs
           for(l in latencies) {
             var w = (1-Lib.Fun.arg0toInf((time-l.time).toDouble(),10000f)).toDouble()
             w *= (1-Lib.Fun.arg0toInf(l.latency.toDouble(),Params.DEFAULT_LATENCY_MS.toFloat())).toDouble()
@@ -59,8 +59,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
     try {
       socket.connect()
     } catch(e:Exception) {
-      Todo.handleOffline()//todo
-      //e.printStackTrace();
+      //todo handle offline
     }
 
   }
@@ -83,16 +82,12 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
   }
 
   private fun sayNow(say:ClientSay<C>) {
-    var attempt = 0
-    while(attempt++<3) {//todo Костыль JSON сериализации
-      try {
-        socket.send(Common.toJson(say))
-        return
-      } catch(t:Throwable) {
-      }
-
+    try {
+      socket.send(Common.toJson(say))
+      return
+    } catch(t:Throwable) {
+      t.printStackTrace()
     }
-    App.log.error("sayNow 3 attempts fail")
   }
 
   private class LatencyTime(val latency:Int,val time:Long)
