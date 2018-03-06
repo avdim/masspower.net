@@ -1,8 +1,5 @@
 package com.riseofcat
 
-import com.github.czyzby.websocket.*
-import com.github.czyzby.websocket.data.*
-import com.github.czyzby.websocket.net.*
 import com.riseofcat.common.*
 import com.riseofcat.lib.*
 import com.riseofcat.share.*
@@ -10,28 +7,25 @@ import kotlin.reflect.*
 
 class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSay<S>>) {
   private val incoming = Signal<S>()
-  private val socket:WebSocket
+  private val socket:LibWebSocket
   private val queue:MutableList<ClientSay<C>> = mutableListOf()//todo test
   var smartLatencyS = Params.DEFAULT_LATENCY_S
   var latencyS = Params.DEFAULT_LATENCY_S
   private val latencies:MutableList<LatencyTime> = mutableListOf()
-  val state:WebSocketState
-    get() = socket.state
 
   init {
     latencies.add(LatencyTime(Params.DEFAULT_LATENCY_MS,App.timeMs()))
-    socket = if(true) ExtendedNet.getNet().newWebSocket(host,port,path) else WebSockets.newSocket(WebSockets.toWebSocketUrl(host,port,path))
-    socket.addListener(object:WebSocketAdapter() {
-      override fun onOpen(webSocket:WebSocket?):Boolean {
+    socket = Common.createWebSocket(host,port,path)
+    socket.addListener(object:LibWebSocket.Listener {
+      override fun onOpen() {
         while(queue.isNotEmpty()) sayNow(queue.removeFirst())
-        return WebSocketListener.FULLY_HANDLED
       }
 
-      override fun onClose(webSocket:WebSocket?,code:WebSocketCloseCode?,reason:String?):Boolean {
-        return WebSocketListener.FULLY_HANDLED
+      override fun onClose() {
+
       }
 
-      override fun onMessage(webSocket:WebSocket?,packet:String):Boolean {
+      override fun onMessage(packet:String) {
         if(false) App.log.info(packet)
         val serverSay = Common.fromJson(packet,typeS)
         if(serverSay.latency!=null) {
@@ -55,16 +49,8 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
           say(answer)
         }
         if(serverSay.payload!=null) incoming.dispatch(serverSay.payload!!)
-        return WebSocketListener.FULLY_HANDLED
       }
 
-      override fun onMessage(webSocket:WebSocket?,packet:ByteArray?):Boolean {
-        return super.onMessage(webSocket,packet)
-      }
-
-      override fun onError(webSocket:WebSocket?,error:Throwable?):Boolean {
-        return super.onError(webSocket,error)//todo
-      }
     })
   }
 
@@ -80,8 +66,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
   }
 
   fun close() {
-    WebSockets.closeGracefully(socket) // Null-safe closing method that catches and logs any exceptions.
-    if(false) socket.close()
+    socket.close()
   }
 
   fun say(payload:C) {
@@ -91,7 +76,7 @@ class PingClient<S:Any,C>(host:String,port:Int,path:String,typeS:KClass<ServerSa
   }
 
   private fun say(say:ClientSay<C>) {
-    if(socket.state==WebSocketState.OPEN)
+    if(socket.state == LibWebSocket.State.OPEN)
       sayNow(say)
     else
       queue.add(say)

@@ -95,7 +95,6 @@ dependencies {
   compile project(':core')
 //  expectedBy project(":server-common")//todo kotlin multiplatform
   compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-  compile "com.github.czyzby:gdx-websocket-common:$websocketVersion"
   natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
   natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
   natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"

@@ -2,7 +2,6 @@ package com.riseofcat.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.github.czyzby.websocket.CommonWebSockets;
 import com.riseofcat.share.Params;
 import com.riseofcat.App;
 import com.riseofcat.Core;
@@ -19,7 +18,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DesktopLauncher {
 public static void main(final String[] args) {
 	// Initiating web sockets module:
-	CommonWebSockets.initiate();
 	createApplication();
 }
 
