@@ -2,12 +2,11 @@ package com.riseofcat
 
 import com.riseofcat.client.Conf
 import com.riseofcat.client.PingClient
+import com.riseofcat.client.ServerSayS
 import com.riseofcat.common.*
 import com.riseofcat.lib.*
-import com.riseofcat.redundant.*
 import com.riseofcat.share.*
 import com.riseofcat.share.data.*
-import java.util.*
 import kotlin.reflect.*
 
 class Model(conf:Conf) {
@@ -15,8 +14,8 @@ class Model(conf:Conf) {
   @Deprecated("") var copyTime:Long = 0
   @Deprecated("") var tickTime:Long = 0
   var playerId:PlayerId? = null
-  private val actions = DefaultValueMap(HashMap<Tick,MutableList<BigAction>>(),{Common.createConcurrentList()})
-  private val myActions = DefaultValueMap(HashMap<Tick,MutableList<Action>>(),{ArrayList()})
+  private val actions = DefaultValueMap<Tick, MutableList<BigAction>>(hashMapOf(),{Common.createConcurrentList()})
+  private val myActions = DefaultValueMap<Tick, MutableList<Action>>(hashMapOf(),{mutableListOf()})
   private var stable:StateWrapper? = null
   private var sync:Sync? = null
   val playerName:String
