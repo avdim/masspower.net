@@ -31,11 +31,10 @@ class Core:ApplicationAdapter() {
   override fun create() {
     val defaultVertex = Gdx.files.internal("shader/default_vertex_shader.vert")
     ShaderProgram.pedantic = false
-    App.create()//todo
     batch = SpriteBatch()
     if(BACKGROUND_BATCH) {
       backgroundBatchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/background/stars.frag"))
-      if(!backgroundBatchShader!!.isCompiled) App.log.error(backgroundBatchShader!!.log)
+      if(!backgroundBatchShader!!.isCompiled) Lib.Log.error(backgroundBatchShader!!.log)
       backgroundBatch = SpriteBatch()
       backgroundBatch!!.shader = backgroundBatchShader
     }
@@ -45,7 +44,7 @@ class Core:ApplicationAdapter() {
       mesh!!.setIndices(shortArrayOf(0,1,2,2,3,0))
       meshShader = ShaderProgram(Gdx.files.internal("shader/mesh/default.vert"),
         Gdx.files.internal("shader/background/stars.frag"))
-      if(!meshShader!!.isCompiled) App.log.error(meshShader!!.log)
+      if(!meshShader!!.isCompiled) Lib.Log.error(meshShader!!.log)
     }
     viewport1 = ExtendViewport(1000f,1000f,OrthographicCamera())//todo 1000f
     if(MULTIPLE_VIEWPORTS)
@@ -59,7 +58,7 @@ class Core:ApplicationAdapter() {
     val conf = Common.fromJson(str,Conf::class)
     model = Model(conf)
     batchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/good_blur.frag"))
-    if(!batchShader!!.isCompiled) App.log.error(batchShader!!.log)
+    if(!batchShader!!.isCompiled) Lib.Log.error(batchShader!!.log)
     if(false) batch!!.shader = batchShader
     shapeRenderer = ShapeRenderer2(10000,null)
     shapeRenderer!!.setAutoShapeType(false)
@@ -72,6 +71,7 @@ class Core:ApplicationAdapter() {
   }
 
   override fun resize(width:Int,height:Int) {
+    //todo new OrthographicCamera().setToOrtho(false, 100, 100);
     if(MULTIPLE_VIEWPORTS) {
       viewport1!!.update(width/2,height,true)
       viewport1!!.screenX = width/2
@@ -203,7 +203,7 @@ class Core:ApplicationAdapter() {
       height = temp
     }
     program!!.setUniformf(program.fetchUniformLocation("resolution",false),width.toFloat(),height.toFloat())
-    program.setUniformf("time",App.sinceStartS())//30f
+    program.setUniformf("time",Lib.timeS)//30f
     program.setUniformf("mouse",backgroundOffset.x,backgroundOffset.y)
   }
 
@@ -221,12 +221,7 @@ class Core:ApplicationAdapter() {
     return XY(x,y)
   }
 
-  private fun checkForGlError() {
-    val error = Gdx.gl.glGetError()
-    if(error!=GL20.GL_NO_ERROR) {
-      App.log.error("GL Error: $error")
-    }
-  }
+  private fun checkForGlError() = Gdx.gl.glGetError().let {if(it!=GL20.GL_NO_ERROR) Lib.Log.error("GL Error: $it")}
 
   override fun dispose() {
     model!!.dispose()
