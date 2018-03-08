@@ -23,50 +23,58 @@ val colors = arrayOf(Color.BLUE,Color.GOLD,Color.PINK,Color.RED,Color.GREEN,Colo
 val Vector2.xy get() = XY(x,y)
 val Vector3.xy get() = XY(x,y)
 
+class BatchWithShader(val b:SpriteBatch, val s:ShaderProgram) {
+  init { b.shader = s }
+}
+
 class Core:ApplicationAdapter() {
   private lateinit var model:Model
   private var backgroundOffset = XY(0f,0f)
-  private var batch:SpriteBatch? = null
-  private var backgroundBatch:SpriteBatch? = null
-  private var shapeRenderer:ShapeRenderer2? = null
+  private var background:BatchWithShader? = null;
+  private lateinit var shapeRenderer:ShapeRenderer2
   private lateinit var viewport1:Viewport
   private lateinit var viewport2:Viewport
   private var stage:Stage? = null
-  private var backgroundBatchShader:ShaderProgram? = null
-  private var batchShader:ShaderProgram? = null
-  private lateinit var mesh:Mesh
+  private lateinit var batch:SpriteBatch
+  private lateinit var batchShader:ShaderProgram
+  private var mesh:Mesh? = null
   private lateinit var meshShader:ShaderProgram
   override fun create() {
     val defaultVertex = Gdx.files.internal("shader/default_vertex_shader.vert")
     ShaderProgram.pedantic = false
     batch = SpriteBatch()
     if(BACKGROUND_BATCH) {
-      backgroundBatchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/background/stars.frag"))
-      if(!backgroundBatchShader!!.isCompiled) Lib.Log.error(backgroundBatchShader!!.log)
-      backgroundBatch = SpriteBatch()
-      backgroundBatch!!.shader = backgroundBatchShader
+      background = BatchWithShader(
+        SpriteBatch(),
+        ShaderProgram(defaultVertex,Gdx.files.internal("shader/background/stars.frag"))
+          .apply {if(!isCompiled) Lib.Log.error(log)}
+      )
     }
     if(BACKGROUND_MESH) {
-      mesh = Mesh(true,4,6,VertexAttribute(VertexAttributes.Usage.Position,2,"aVertexPosition"))
-      mesh.setVertices(floatArrayOf(-1.0f,1.0f,-1.0f,-1.0f,1.0f,-1.0f,1.0f,1.0f))
-      mesh.setIndices(shortArrayOf(0,1,2,2,3,0))
+      mesh = Mesh(true,4,6,VertexAttribute(VertexAttributes.Usage.Position,2,"aVertexPosition")).apply {
+        setVertices(floatArrayOf(-1.0f,1.0f,-1.0f,-1.0f,1.0f,-1.0f,1.0f,1.0f))
+        setIndices(shortArrayOf(0,1,2,2,3,0))
+      }
       meshShader = ShaderProgram(Gdx.files.internal("shader/mesh/default.vert"),
         Gdx.files.internal("shader/background/stars.frag"))
-      if(!meshShader.isCompiled) Lib.Log.error(meshShader.log)
+        .apply {
+          if(!isCompiled) Lib.Log.error(meshShader.log)
+        }
     }
     viewport1 = ExtendViewport(1000f,1000f,OrthographicCamera())//todo 1000f
     viewport2 = if(MULTIPLE_VIEWPORTS) ExtendViewport(500f,500f,OrthographicCamera()) else viewport1
-    stage = Stage(viewport2/*, batch*/)
-    stage!!.addActor(GradientShapeRect(200,50))
-    stage!!.addActor(Image(Resources.Textures.tank))
+    stage = Stage(viewport2/*, batch*/).apply {
+      addActor(GradientShapeRect(200,50))
+      addActor(Image(Resources.Textures.tank))
+    }
     val str = Gdx.files.internal("conf.json").readString()
     val conf = Common.fromJson(str,Conf::class)
     model = Model(conf)
     batchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/good_blur.frag"))
-    if(!batchShader!!.isCompiled) Lib.Log.error(batchShader!!.log)
-    if(false) batch!!.shader = batchShader
+    if(!batchShader.isCompiled) Lib.Log.error(batchShader.log)
+    if(false) batch.shader = batchShader
     shapeRenderer = ShapeRenderer2(10000,null)
-    shapeRenderer!!.setAutoShapeType(false)
+    shapeRenderer.setAutoShapeType(false)
     Gdx.input.inputProcessor = InputMultiplexer(stage,object:InputAdapter() {
       override fun touchDown(screenX:Int,screenY:Int,pointer:Int,button:Int):Boolean {
         model.touch(viewport1.unproject(Vector2(screenX.toFloat(),screenY.toFloat())).xy)
@@ -81,10 +89,10 @@ class Core:ApplicationAdapter() {
       viewport1.update(width/2,height,true)
       viewport1.screenX = width/2
       viewport2.update(width/2,height,true)
-    } else
-      viewport1.update(width,height,true)
-    batch!!.projectionMatrix = viewport2.camera.combined
-    shapeRenderer!!.projectionMatrix = viewport1.camera.combined
+    } else viewport1.update(width,height,true)
+
+    batch.projectionMatrix = viewport2.camera.combined
+    shapeRenderer.projectionMatrix = viewport1.camera.combined
   }
 
   override fun render() {
@@ -98,7 +106,7 @@ class Core:ApplicationAdapter() {
           viewport1.camera.position.x = pos.x
           viewport1.camera.position.y = pos.y
           viewport1.camera.update()
-          shapeRenderer!!.projectionMatrix = viewport1.camera.combined
+          shapeRenderer.projectionMatrix = viewport1.camera.combined
           val change = viewport1.camera.position.xy.sub(previous)
           if(change.x>state.width()/2)
             change.x = change.x-state.width()
@@ -113,71 +121,75 @@ class Core:ApplicationAdapter() {
     }
     Gdx.gl.glClearColor(0f,0f,0f,1f)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-    if(BACKGROUND_MESH) {
+    mesh?.apply {
       meshShader.begin()
       applyUniform(meshShader)
-      mesh.render(meshShader,GL20.GL_TRIANGLES)
+      render(meshShader,GL20.GL_TRIANGLES)
       checkForGlError()
       meshShader.end()
       if(false) Gdx.gl.glFlush()//save fps
       if(false) Gdx.gl.glFinish()//save fps
     }
     if(TEST_TEXTURE) {
-      if(false) stage!!.viewport.apply()
-      stage!!.act(/*Gdx.graphics.getDeltaTime()*/)
-      stage!!.draw()
+      stage?.apply {
+        if(false) viewport.apply()
+        act(/*Gdx.graphics.getDeltaTime()*/)
+        draw()
+      }
     }
     if(BACKGROUND_BATCH) {
       viewport2.apply()
       //		backgroundBatchShader.setUniformf(), viewport2.getWorldWidth(), viewport2.getWorldHeight());
-      backgroundBatch!!.begin()
-      applyUniform(backgroundBatchShader)
-      backgroundBatch!!.draw(Resources.Textures.tank,0f,0f,viewport2.worldWidth,viewport2.worldHeight)//todo change to mesh https://github.com/mc-imperial/libgdx-get-image
-      backgroundBatch!!.end()
+      background?.apply {
+        b.begin()
+        applyUniform(s)
+        b.draw(Resources.Textures.tank,0f,0f,viewport2.worldWidth,viewport2.worldHeight)//todo change to mesh https://github.com/mc-imperial/libgdx-get-image
+        b.end()
+      }
     }
     viewport1.apply()
     if(state!=null) {
       if(DRAW_GRID) {
-        shapeRenderer!!.begin(ShapeRenderer2.ShapeType.Line)
-        shapeRenderer!!.color = Color.WHITE
+        shapeRenderer.begin(ShapeRenderer2.ShapeType.Line)
+        shapeRenderer.color = Color.WHITE
         val gridSize = 100f
         var x = 0
         while(x*gridSize<=state.width()) {
-          shapeRenderer!!.line(x*gridSize,0f,0f,x*gridSize,state.height(),0f)
+          shapeRenderer.line(x*gridSize,0f,0f,x*gridSize,state.height(),0f)
           x++
         }
         var y = 0
         while(y*gridSize<state.height()) {
-          shapeRenderer!!.line(0f,y*gridSize,0f,state.width(),y*gridSize,0f)
+          shapeRenderer.line(0f,y*gridSize,0f,state.width(),y*gridSize,0f)
           y++
         }
-        shapeRenderer!!.end()
+        shapeRenderer.end()
       }
-      shapeRenderer!!.begin(ShapeRenderer2.ShapeType.Filled)
-      shapeRenderer!!.color = Color.GRAY
+      shapeRenderer.begin(ShapeRenderer2.ShapeType.Filled)
+      shapeRenderer.color = Color.GRAY
       for(food in state.foods) {
         val (x,y) = calcRenderXY(state,food.pos)
-        shapeRenderer!!.circle(x,y,food.radius())
+        shapeRenderer.circle(x,y,food.radius())
       }
       for(react in state.reactive) {
         val (x,y) = calcRenderXY(state,react.pos)
         val color = colors[react.owner.id%(colors.size-1)]
-        shapeRenderer!!.color = color
-        shapeRenderer!!.circle(x,y,react.radius())
+        shapeRenderer.color = color
+        shapeRenderer.circle(x,y,react.radius())
       }
       for(car in state.cars) {
         val (x,y) = calcRenderXY(state,car.pos)
         val color = colors[car.owner.id%(colors.size-1)]
-        shapeRenderer!!.color = color
-        shapeRenderer!!.circle(x,y,car.radius()/*, 20*/)
+        shapeRenderer.color = color
+        shapeRenderer.circle(x,y,car.radius()/*, 20*/)
       }
-      shapeRenderer!!.end()
+      shapeRenderer.end()
     }
     if(MULTIPLE_VIEWPORTS) viewport2.apply()
-    batch!!.begin()
+    batch.begin()
     val width = Gdx.graphics.width.toFloat()
     val height = Gdx.graphics.height.toFloat()
-    batchShader?.apply {
+    batchShader.apply {
       setUniformf("u_viewportInverse",Vector2(1f/width,1f/height))
       setUniformf("u_offset",2f)
       setUniformf("u_step",Math.min(1f,width/70f))
@@ -190,16 +202,16 @@ class Core:ApplicationAdapter() {
     Resources.Font.loadedFont().draw(batch,"tickTime: "+model.tickTime,0f,350f)
     if(false) Resources.Font.loadedFont().draw(batch,"smart latency: "+(model.client.smartLatencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,300f)
     if(TEST_TEXTURE) {
-      batch!!.draw(Resources.Textures.tank,viewport2.worldWidth/2,viewport2.worldHeight/2)
-      batch!!.draw(Resources.Textures.red,viewport2.worldWidth/3,viewport2.worldHeight/2)
-      batch!!.draw(Resources.Textures.green,viewport2.worldWidth/2,viewport2.worldHeight/3)
-      batch!!.draw(Resources.Textures.blue,viewport2.worldWidth/3,viewport2.worldHeight/3)
-      batch!!.draw(Resources.Textures.yellow,viewport2.worldWidth*2/3,viewport2.worldHeight/2)
+      batch.draw(Resources.Textures.tank,viewport2.worldWidth/2,viewport2.worldHeight/2)
+      batch.draw(Resources.Textures.red,viewport2.worldWidth/3,viewport2.worldHeight/2)
+      batch.draw(Resources.Textures.green,viewport2.worldWidth/2,viewport2.worldHeight/3)
+      batch.draw(Resources.Textures.blue,viewport2.worldWidth/3,viewport2.worldHeight/3)
+      batch.draw(Resources.Textures.yellow,viewport2.worldWidth*2/3,viewport2.worldHeight/2)
     }
-    batch!!.end()
+    batch.end()
   }
 
-  private fun applyUniform(program:ShaderProgram?) {
+  private fun applyUniform(program:ShaderProgram) {
     var width = Gdx.graphics.width
     var height = Gdx.graphics.height
     if(height>width) {//todo check landscape
@@ -207,8 +219,8 @@ class Core:ApplicationAdapter() {
       width = height
       height = temp
     }
-    program!!.setUniformf(program.fetchUniformLocation("resolution",false),width.toFloat(),height.toFloat())
-    program.setUniformf("time",Lib.timeS)//30f
+    program.setUniformf(program.fetchUniformLocation("resolution",false),width.toFloat(),height.toFloat())
+    program.setUniformf("time",Lib.sinceStartS)//30f
     program.setUniformf("mouse",backgroundOffset.x,backgroundOffset.y)
   }
 
@@ -230,8 +242,8 @@ class Core:ApplicationAdapter() {
 
   override fun dispose() {
     model.dispose()
-    batch!!.dispose()
-    shapeRenderer!!.dispose()
+    batch.dispose()
+    shapeRenderer.dispose()
     //todo dispose shaders
     Resources.dispose()
   }
