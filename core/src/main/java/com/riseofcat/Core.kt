@@ -97,8 +97,7 @@ class Core:ApplicationAdapter() {
 
   override fun render() {
     val TEST_TEXTURE = false
-    model.update(Gdx.graphics.deltaTime)
-    val state = model.displayState
+    val state = model.calcDisplayState()
     if(state!=null) {
       for((owner,_,_,pos) in state.cars) {
         if(owner==model.playerId) {
@@ -220,7 +219,7 @@ class Core:ApplicationAdapter() {
       height = temp
     }
     program.setUniformf(program.fetchUniformLocation("resolution",false),width.toFloat(),height.toFloat())
-    program.setUniformf("time",Lib.sinceStartS)//30f
+    program.setUniformf("time",Lib.pillarTimeS(10_000f))//30f
     program.setUniformf("mouse",backgroundOffset.x,backgroundOffset.y)
   }
 
