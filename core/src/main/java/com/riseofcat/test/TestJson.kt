@@ -2,15 +2,19 @@ package com.riseofcat.test
 
 import com.badlogic.gdx.utils.*
 import com.google.gson.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.*
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*
 
-/*@Serializable*/ data class Data<T>(
+@Serializable data class DataExtra(var d2:Data<Extra>)
+
+@Serializable data class Data<T>(
   var a:String? = null,
   var b:Double = 0.0,
   var c:T? = null)
 
-/*@Serializable*/ data class Extra (
+@Serializable data class Extra (
   val extra:String,
   val extraInt:Int
 )
@@ -19,13 +23,13 @@ class TestJson {
   companion object {
     fun testJson() {
       Json()//todo test
-      val data = Data<Extra>("abc",3.14, Extra("extra data", 123))
+      val data = DataExtra(Data<Extra>("abc",3.14, Extra("extra data", 123)))
       val strGson = Gson().toJson(data)
       val dataGson:Map<String, Any> = Gson().fromJson<Map<String, Any>>(strGson,getKClass<Map<String, Any>>().java)
 //      val strKlaxon = Klaxon().toJsonString(data)
 //      val dataKlaxon = Klaxon().parse<Data<Extra>>(strKlaxon)
-//      val strJetBrains = JSON.stringify(data)
-//      val dataJetBrains:Data<Extra> = JSON.parse(strJetBrains)
+      val strJetBrains:String = JSON.stringify(data)
+      val dataJetBrains:DataExtra = JSON.parse(strJetBrains)
       testCodeGenerated()
       println("complete")
     }

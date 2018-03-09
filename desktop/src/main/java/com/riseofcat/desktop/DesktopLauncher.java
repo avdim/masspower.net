@@ -4,6 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.riseofcat.Core;
 import com.riseofcat.share.Params;
+import com.riseofcat.test.TestJson;
 
 /**
  * Launches the desktop (LWJGL) application.
@@ -26,6 +27,7 @@ private static LwjglApplicationConfiguration getDefaultConfiguration() {
 //	for(int size : new int[]{128, 64, 32, 16}) {
 //		configuration.addIcon("libgdx" + size + ".png", FileType.Internal);
 //	}
+	TestJson.Companion.testJson();
 	return configuration;
 }
 }
