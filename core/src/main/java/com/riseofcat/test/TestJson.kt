@@ -2,10 +2,16 @@ package com.riseofcat.test
 
 import com.badlogic.gdx.utils.*
 import com.google.gson.*
-import kotlinx.serialization.Serializable
+import com.riseofcat.share.*
+import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*
+
+@Serializable
+data class Data2(val a: Int)
+@Serializable
+data class Box<T>(val boxed: T)
 
 @Serializable data class DataExtra(var d2:Data<Extra>)
 
@@ -32,6 +38,25 @@ class TestJson {
       val dataJetBrains:DataExtra = JSON.parse(strJetBrains)
       testCodeGenerated()
       println("complete")
+
+      if(true) {
+        val serverPayloadSerializer: KSerializer<ServerPayload> = ServerPayload.serializer()
+        val serverSayServerPayloadSerializer: KSerializer<ServerSay<ServerPayload>> = ServerSay.serializer(serverPayloadSerializer)
+        val serverSay = ServerSay<ServerPayload>()
+        serverSay.latency = 11
+        val strJetBrains2 = JSON.stringify(serverSayServerPayloadSerializer, serverSay)
+        val serverSay2 = JSON.parse(serverSayServerPayloadSerializer, strJetBrains2)
+        println("serverSayS2.latency = ${serverSay2.latency}")
+        println("jetbrains")
+      }
+
+      val dataSerial     : KSerializer<Data2>      = Data2.serializer()
+      val boxedDataSerial: KSerializer<Box<Data2>> = Box.serializer(dataSerial)
+      val box:Box<Data2> = Box(Data2(123))
+      val box2 = JSON.parse(boxedDataSerial,JSON.stringify(boxedDataSerial,box))
+      if(box == box2) {
+        println("box2.boxed.a = ${box2.boxed.a}")
+      }
     }
     fun testCodeGenerated() {
       val constructors:List<KFunction<Data<Extra>>> = getKClass<Data<Extra>>().constructors as List

@@ -7,7 +7,7 @@ include("server-common")
 project(":server-common").projectDir = File("submodule-server/server-common")
 include("heroku-jvm")
 project(":heroku-jvm").projectDir = File("submodule-server/heroku-jvm")
-include("client-common")
+//include("client-common")
 include("submodule-html")
 include("desktop")
 include("core")
@@ -18,3 +18,19 @@ if(false)includeBuild("submodule-server") {
     substitute(module("com.n8cats:core:1.0")).with(project(":"))
   }
 }
+
+pluginManagement({
+  repositories {
+    gradlePluginPortal()
+    maven("https://kotlin.bintray.com/kotlinx")
+  }
+  resolutionStrategy {
+    eachPlugin {
+      when (requested.id.id) {
+        "kotlinx-serialization"->{
+          useModule("org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:${requested.version}")
+        }
+      }
+    }
+  }
+})

@@ -1,6 +1,18 @@
 //   LibGDX
+buildscript {
+  repositories {
+    jcenter()
+    maven { url "https://kotlin.bintray.com/kotlinx" }
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$serialization_version"
+  }
+}
 
 apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'kotlinx-serialization'
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 ext.appName = 'mass-power.io'//power-mass.io,react-mass.io
@@ -22,6 +34,7 @@ dependencies {
   compile project(':core')
   compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
   compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
 }
 jar {
   archiveName "${appName}-${version}.jar"

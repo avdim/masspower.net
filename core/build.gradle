@@ -1,8 +1,6 @@
 //   LibGDX
 
 buildscript {
-//  ext.kotlin_version = $kotlinVersion
-  ext.serialization_version = "0.4.1"
   repositories {
     jcenter()
     maven { url "https://kotlin.bintray.com/kotlinx" }
