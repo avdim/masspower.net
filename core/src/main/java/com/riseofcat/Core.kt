@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.*
 import com.riseofcat.client.Conf
 import com.riseofcat.client.Model
-import com.riseofcat.common.*
 import com.riseofcat.lib.*
 import com.riseofcat.redundant.*
 import com.riseofcat.share.data.*
@@ -68,7 +67,7 @@ class Core:ApplicationAdapter() {
       addActor(Image(Resources.Textures.tank))
     }
     val str = Gdx.files.internal("conf.json").readString()
-    val conf = Common.fromJson(str,Conf::class)
+    val conf:Conf = Lib.json.parse(str)
     model = Model(conf)
     batchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/good_blur.frag"))
     if(!batchShader.isCompiled) Lib.Log.error(batchShader.log)
