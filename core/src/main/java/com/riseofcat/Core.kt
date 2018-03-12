@@ -12,7 +12,7 @@ import com.riseofcat.client.Conf
 import com.riseofcat.client.Model
 import com.riseofcat.lib.*
 import com.riseofcat.redundant.*
-import com.riseofcat.share.data.*
+import com.riseofcat.share.mass.*
 
 const val MULTIPLE_VIEWPORTS = false
 const val BACKGROUND_BATCH = false

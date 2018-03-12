@@ -3,7 +3,8 @@ package com.riseofcat.test
 import com.badlogic.gdx.utils.*
 import com.google.gson.*
 import com.riseofcat.lib.*
-import com.riseofcat.share.*
+import com.riseofcat.share.base.*
+import com.riseofcat.share.mass.*
 import kotlinx.serialization.*
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*

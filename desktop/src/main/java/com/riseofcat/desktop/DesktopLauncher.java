@@ -3,7 +3,7 @@ package com.riseofcat.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.riseofcat.Core;
-import com.riseofcat.share.Params;
+import com.riseofcat.share.mass.GameConst;
 import com.riseofcat.test.TestJson;
 
 /**
@@ -21,7 +21,7 @@ private static LwjglApplication createApplication() {
 
 private static LwjglApplicationConfiguration getDefaultConfiguration() {
 	final LwjglApplicationConfiguration configuration = new LwjglApplicationConfiguration();
-	configuration.title = Params.INSTANCE.getTITLE();
+	configuration.title = GameConst.INSTANCE.getTITLE();
 	configuration.width = 400;
 	configuration.height = 400;
 //	for(int size : new int[]{128, 64, 32, 16}) {
