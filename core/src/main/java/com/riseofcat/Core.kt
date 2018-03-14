@@ -29,7 +29,7 @@ class BatchWithShader(val b:SpriteBatch, val s:ShaderProgram) {
 class Core:ApplicationAdapter() {
   private lateinit var model:Model
   private var backgroundOffset = XY(0f,0f)
-  private var background:BatchWithShader? = null;
+  private var background:BatchWithShader? = null
   private lateinit var shapeRenderer:ShapeRenderer2
   private lateinit var viewport1:Viewport
   private lateinit var viewport2:Viewport
@@ -167,19 +167,19 @@ class Core:ApplicationAdapter() {
       shapeRenderer.color = Color.GRAY
       for(food in state.foods) {
         val (x,y) = calcRenderXY(state,food.pos)
-        shapeRenderer.circle(x,y,food.radius())
+        shapeRenderer.circle(x,y,food.radius)
       }
       for(react in state.reactive) {
         val (x,y) = calcRenderXY(state,react.pos)
         val color = colors[react.owner.id%(colors.size-1)]
         shapeRenderer.color = color
-        shapeRenderer.circle(x,y,react.radius())
+        shapeRenderer.circle(x,y,react.radius)
       }
       for(car in state.cars) {
         val (x,y) = calcRenderXY(state,car.pos)
         val color = colors[car.owner.id%(colors.size-1)]
         shapeRenderer.color = color
-        shapeRenderer.circle(x,y,car.radius()/*, 20*/)
+        shapeRenderer.circle(x,y,car.radius/*, 20*/)
       }
       shapeRenderer.end()
     }
@@ -193,6 +193,7 @@ class Core:ApplicationAdapter() {
       setUniformf("u_step",Math.min(1f,width/70f))
       setUniformf("u_color",Vector3(0f,1f,1f))
     }
+    Resources.Font.loadedFont().draw(batch,"tick average: %.2f".format(average/1000),0f,100f)
     Resources.Font.loadedFont().draw(batch,"fps: "+Gdx.graphics.framesPerSecond,0f,150f)
     Resources.Font.loadedFont().draw(batch,model.playerName,0f,200f)
     Resources.Font.loadedFont().draw(batch,"latency: "+(model.client.latencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,250f)
