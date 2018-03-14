@@ -105,14 +105,14 @@ class Core:ApplicationAdapter() {
           viewport1.camera.position.y = pos.y
           viewport1.camera.update()
           shapeRenderer.projectionMatrix = viewport1.camera.combined
-          val change = viewport1.camera.position.xy.sub(previous)
+          val change = viewport1.camera.position.xy - previous
           if(change.x>state.width()/2)
             change.x = change.x-state.width()
           else if(change.x<-state.width()/2) change.x = change.x+state.width()
           if(change.y>state.height()/2)
             change.y = change.y-state.height()
           else if(change.y<-state.height()/2) change.y = change.y+state.height()
-          backgroundOffset = backgroundOffset.add(change.mutable().scale(0.0001f))
+          backgroundOffset = backgroundOffset + change.mutable().scale(0.0001f)
           break
         }
       }
