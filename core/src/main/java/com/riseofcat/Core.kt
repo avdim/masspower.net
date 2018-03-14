@@ -106,12 +106,12 @@ class Core:ApplicationAdapter() {
           viewport1.camera.update()
           shapeRenderer.projectionMatrix = viewport1.camera.combined
           val change = viewport1.camera.position.xy - previous
-          if(change.x>state.width()/2)
-            change.x = change.x-state.width()
-          else if(change.x<-state.width()/2) change.x = change.x+state.width()
-          if(change.y>state.height()/2)
-            change.y = change.y-state.height()
-          else if(change.y<-state.height()/2) change.y = change.y+state.height()
+          if(change.x>state.width/2)
+            change.x = change.x-state.width
+          else if(change.x<-state.width/2) change.x = change.x+state.width
+          if(change.y>state.height/2)
+            change.y = change.y-state.height
+          else if(change.y<-state.height/2) change.y = change.y+state.height
           backgroundOffset = backgroundOffset + change.mutable().scale(0.0001f)
           break
         }
@@ -152,13 +152,13 @@ class Core:ApplicationAdapter() {
         shapeRenderer.color = Color.WHITE
         val gridSize = 100f
         var x = 0
-        while(x*gridSize<=state.width()) {
-          shapeRenderer.line(x*gridSize,0f,0f,x*gridSize,state.height(),0f)
+        while(x*gridSize<=state.width) {
+          shapeRenderer.line(x*gridSize,0f,0f,x*gridSize,state.height,0f)
           x++
         }
         var y = 0
-        while(y*gridSize<state.height()) {
-          shapeRenderer.line(0f,y*gridSize,0f,state.width(),y*gridSize,0f)
+        while(y*gridSize<state.height) {
+          shapeRenderer.line(0f,y*gridSize,0f,state.width,y*gridSize,0f)
           y++
         }
         shapeRenderer.end()
@@ -223,14 +223,14 @@ class Core:ApplicationAdapter() {
   private fun calcRenderXY(state:State,pos:XY):XY {
     var x = pos.x
     val dx = viewport1.camera.position.x-x
-    if(dx>state.width()/2)
-      x += state.width()
-    else if(dx<-state.width()/2) x -= state.width()
+    if(dx>state.width/2)
+      x += state.width
+    else if(dx<-state.width/2) x -= state.width
     var y = pos.y
     val dy = viewport1.camera.position.y-y
-    if(dy>state.height()/2)
-      y += state.height()
-    else if(dy<-state.height()/2) y -= state.height()
+    if(dy>state.height/2)
+      y += state.height
+    else if(dy<-state.height/2) y -= state.height
     return XY(x,y)
   }
 
