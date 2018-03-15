@@ -112,7 +112,7 @@ class Core:ApplicationAdapter() {
           if(change.y>state.height/2)
             change.y = change.y-state.height
           else if(change.y<-state.height/2) change.y = change.y+state.height
-          backgroundOffset = backgroundOffset + change.mutable().scale(0.0001f)
+          backgroundOffset = backgroundOffset + change.scale(0.0001f)
           break
         }
       }
