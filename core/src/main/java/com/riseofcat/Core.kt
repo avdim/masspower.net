@@ -8,8 +8,7 @@ import com.badlogic.gdx.math.*
 import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.*
-import com.riseofcat.client.Conf
-import com.riseofcat.client.Model
+import com.riseofcat.client.*
 import com.riseofcat.lib.*
 import com.riseofcat.redundant.*
 import com.riseofcat.share.mass.*
@@ -193,7 +192,7 @@ class Core:ApplicationAdapter() {
       setUniformf("u_step",Math.min(1f,width/70f))
       setUniformf("u_color",Vector3(0f,1f,1f))
     }
-    Resources.Font.loadedFont().draw(batch,"tick average: %.2f".format(average/1000),0f,100f)
+    Resources.Font.loadedFont().draw(batch,"tick average: %.2f".format(averageTickNanos/1000),0f,100f)
     Resources.Font.loadedFont().draw(batch,"fps: "+Gdx.graphics.framesPerSecond,0f,150f)
     Resources.Font.loadedFont().draw(batch,model.playerName,0f,200f)
     Resources.Font.loadedFont().draw(batch,"latency: "+(model.client.latencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,250f)
