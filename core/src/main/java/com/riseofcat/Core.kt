@@ -16,10 +16,8 @@ import com.riseofcat.share.mass.*
 const val MULTIPLE_VIEWPORTS = false
 const val BACKGROUND_BATCH = false
 const val BACKGROUND_MESH = true
-const val DRAW_GRID = true
+const val DRAW_GRID = false
 val colors = arrayOf(Color.BLUE,Color.GOLD,Color.PINK,Color.RED,Color.GREEN,Color.VIOLET,Color.LIME,Color.TEAL,Color.YELLOW)
-val Vector2.xy get() = XY(x,y)
-val Vector3.xy get() = XY(x,y)
 
 class BatchWithShader(val b:SpriteBatch, val s:ShaderProgram) {
   init { b.shader = s }
@@ -27,7 +25,7 @@ class BatchWithShader(val b:SpriteBatch, val s:ShaderProgram) {
 
 class Core:ApplicationAdapter() {
   private lateinit var model:Model
-  private var backgroundOffset = XY(0f,0f)
+  private var backgroundOffset = XY()
   private var background:BatchWithShader? = null
   private lateinit var shapeRenderer:ShapeRenderer2
   private lateinit var viewport1:Viewport
@@ -100,8 +98,8 @@ class Core:ApplicationAdapter() {
       for((owner,_,_,pos) in state.cars) {
         if(owner==model.playerId) {
           val previous = viewport1.camera.position.xy
-          viewport1.camera.position.x = pos.x
-          viewport1.camera.position.y = pos.y
+          viewport1.camera.position.x = pos.xf
+          viewport1.camera.position.y = pos.yf
           viewport1.camera.update()
           shapeRenderer.projectionMatrix = viewport1.camera.combined
           val change = viewport1.camera.position.xy - previous
@@ -111,7 +109,7 @@ class Core:ApplicationAdapter() {
           if(change.y>state.height/2)
             change.y = change.y-state.height
           else if(change.y<-state.height/2) change.y = change.y+state.height
-          backgroundOffset += change*0.0001f
+          backgroundOffset += change*0.0001
           break
         }
       }
@@ -152,12 +150,12 @@ class Core:ApplicationAdapter() {
         val gridSize = 100f
         var x = 0
         while(x*gridSize<=state.width) {
-          shapeRenderer.line(x*gridSize,0f,0f,x*gridSize,state.height,0f)
+          shapeRenderer.line(x*gridSize,0f,0f,x*gridSize,state.height.toFloat(),0f)
           x++
         }
         var y = 0
         while(y*gridSize<state.height) {
-          shapeRenderer.line(0f,y*gridSize,0f,state.width,y*gridSize,0f)
+          shapeRenderer.line(0f,y*gridSize,0f,state.width.toFloat(),y*gridSize,0f)
           y++
         }
         shapeRenderer.end()
@@ -165,20 +163,23 @@ class Core:ApplicationAdapter() {
       shapeRenderer.begin(ShapeRenderer2.ShapeType.Filled)
       shapeRenderer.color = Color.GRAY
       for(food in state.foods) {
-        val (x,y) = calcRenderXY(state,food.pos)
-        shapeRenderer.circle(x,y,food.radius)
+        calcRenderXY(state,food.pos).apply {
+          shapeRenderer.circle(xf,yf,food.radius)
+        }
       }
       for(react in state.reactive) {
-        val (x,y) = calcRenderXY(state,react.pos)
-        val color = colors[react.owner.id%(colors.size-1)]
-        shapeRenderer.color = color
-        shapeRenderer.circle(x,y,react.radius)
+        calcRenderXY(state,react.pos).apply {
+          val color = colors[react.owner.id%(colors.size-1)]
+          shapeRenderer.color = color
+          shapeRenderer.circle(xf,yf,react.radius)
+        }
       }
       for(car in state.cars) {
-        val (x,y) = calcRenderXY(state,car.pos)
-        val color = colors[car.owner.id%(colors.size-1)]
-        shapeRenderer.color = color
-        shapeRenderer.circle(x,y,car.radius/*, 20*/)
+        calcRenderXY(state,car.pos).apply {
+          val color = colors[car.owner.id%(colors.size-1)]
+          shapeRenderer.color = color
+          shapeRenderer.circle(xf,yf,car.radius/*, 20*/)
+        }
       }
       shapeRenderer.end()
     }
@@ -208,16 +209,16 @@ class Core:ApplicationAdapter() {
   }
 
   private fun applyUniform(program:ShaderProgram) {
-    var width = Gdx.graphics.width
-    var height = Gdx.graphics.height
+    var width = Gdx.graphics.width.toFloat()
+    var height = Gdx.graphics.height.toFloat()
     if(height>width) {//todo check landscape
       val temp = width
       width = height
       height = temp
     }
-    program.setUniformf(program.fetchUniformLocation("resolution",false),width.toFloat(),height.toFloat())
+    program.setUniformf(program.fetchUniformLocation("resolution",false),width,height)
     program.setUniformf("time",Lib.pillarTimeS(10_000f))//30f
-    program.setUniformf("mouse",backgroundOffset.x,backgroundOffset.y)
+    program.setUniformf("mouse",backgroundOffset.xf,backgroundOffset.yf)
   }
 
   private fun calcRenderXY(state:State,pos:XY):XY {
@@ -244,3 +245,8 @@ class Core:ApplicationAdapter() {
     Resources.dispose()
   }
 }
+
+val XY.xf get() = x.toFloat()
+val XY.yf get() = y.toFloat()
+val Vector2.xy get() = XY(x,y)
+val Vector3.xy get() = XY(x,y)
