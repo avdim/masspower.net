@@ -250,3 +250,4 @@ val XY.xf get() = x.toFloat()
 val XY.yf get() = y.toFloat()
 val Vector2.xy get() = XY(x,y)
 val Vector3.xy get() = XY(x,y)
+val Angle.gdxTransformRotation get() = degrees
