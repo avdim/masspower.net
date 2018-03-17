@@ -197,6 +197,7 @@ class Core:ApplicationAdapter() {
     Resources.Font.loadedFont().draw(batch,"fps: "+Gdx.graphics.framesPerSecond,0f,150f)
     Resources.Font.loadedFont().draw(batch,model.playerName,0f,200f)
     Resources.Font.loadedFont().draw(batch,"latency: "+(model.client.latencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,250f)
+    Resources.Font.loadedFont().draw(batch,"tick: "+model.calcDisplayState()?.tick,0f,300f)
     if(false) Resources.Font.loadedFont().draw(batch,"smart latency: "+(model.client.smartLatencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,300f)
     if(TEST_TEXTURE) {
       batch.draw(Resources.Textures.tank,viewport2.worldWidth/2,viewport2.worldHeight/2)

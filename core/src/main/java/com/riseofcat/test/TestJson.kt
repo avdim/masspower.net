@@ -3,7 +3,7 @@ package com.riseofcat.test
 import com.badlogic.gdx.utils.*
 import com.google.gson.*
 import com.riseofcat.lib.*
-import com.riseofcat.share.base.*
+import com.riseofcat.share.ping.*
 import com.riseofcat.share.mass.*
 import kotlinx.serialization.*
 import kotlin.reflect.*
@@ -43,7 +43,7 @@ class TestJson {
       if(true) {
         val serverPayloadSerializer: KSerializer<ServerPayload> = ServerPayload.serializer()
         val serverSayServerPayloadSerializer: KSerializer<ServerSay<ServerPayload>> = ServerSay.serializer(serverPayloadSerializer)
-        val serverSay = ServerSay<ServerPayload>(ServerPayload(0f))
+        val serverSay = ServerSay<ServerPayload>(ServerPayload(TickDbl(0.0)))
         serverSay.latency = 11
         val strJetBrains2 = Lib.json.stringify(serverSayServerPayloadSerializer, serverSay)
         val serverSay2 = Lib.json.parse(serverSayServerPayloadSerializer, strJetBrains2)
