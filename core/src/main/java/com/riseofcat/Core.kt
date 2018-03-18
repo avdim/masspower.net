@@ -218,7 +218,7 @@ class Core:ApplicationAdapter() {
       height = temp
     }
     program.setUniformf(program.fetchUniformLocation("resolution",false),width,height)
-    program.setUniformf("time",lib.pillarTimeS(10_000f))//30f
+    program.setUniformf("time",lib.pillarTimeS(10_000f).toFloat())//30f
     program.setUniformf("mouse",backgroundOffset.xf,backgroundOffset.yf)
   }
 
