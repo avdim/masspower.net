@@ -35,8 +35,8 @@ class TestJson {
       val dataGson:Map<String, Any> = Gson().fromJson<Map<String, Any>>(strGson,getKClass<Map<String, Any>>().java)
 //      val strKlaxon = Klaxon().toJsonString(data)
 //      val dataKlaxon = Klaxon().parse<Data<Extra>>(strKlaxon)
-      val strJetBrains:String = Lib.json.stringify(data)
-      val dataJetBrains:DataExtra = Lib.json.parse(strJetBrains)
+      val strJetBrains:String = lib.json.stringify(data)
+      val dataJetBrains:DataExtra = lib.json.parse(strJetBrains)
       testCodeGenerated()
       println("complete")
 
@@ -45,8 +45,8 @@ class TestJson {
         val serverSayServerPayloadSerializer: KSerializer<ServerSay<ServerPayload>> = ServerSay.serializer(serverPayloadSerializer)
         val serverSay = ServerSay<ServerPayload>(ServerPayload(TickDbl(0.0)))
         serverSay.latency = 11
-        val strJetBrains2 = Lib.json.stringify(serverSayServerPayloadSerializer, serverSay)
-        val serverSay2 = Lib.json.parse(serverSayServerPayloadSerializer, strJetBrains2)
+        val strJetBrains2 = lib.json.stringify(serverSayServerPayloadSerializer, serverSay)
+        val serverSay2 = lib.json.parse(serverSayServerPayloadSerializer, strJetBrains2)
         println("serverSayS2.latency = ${serverSay2.latency}")
         println("jetbrains")
       }
@@ -54,7 +54,7 @@ class TestJson {
       val dataSerial:KSerializer<Data2> = Data2.serializer()
       val boxedDataSerial:KSerializer<Box<Data2>> = Box.serializer(dataSerial)
       val box:Box<Data2> = Box(Data2(123))
-      val box2 = Lib.json.parse(boxedDataSerial,Lib.json.stringify(boxedDataSerial,box))
+      val box2 = lib.json.parse(boxedDataSerial,lib.json.stringify(boxedDataSerial,box))
       if(box == box2) {
         println("box2.boxed.a = ${box2.boxed.a}")
       }

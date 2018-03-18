@@ -43,7 +43,7 @@ class Core:ApplicationAdapter() {
       background = BatchWithShader(
         SpriteBatch(),
         ShaderProgram(defaultVertex,Gdx.files.internal("shader/background/stars.frag"))
-          .apply {if(!isCompiled) Lib.Log.error(log)}
+          .apply {if(!isCompiled) lib.log.error(log)}
       )
     }
     if(BACKGROUND_MESH) {
@@ -54,7 +54,7 @@ class Core:ApplicationAdapter() {
       meshShader = ShaderProgram(Gdx.files.internal("shader/mesh/default.vert"),
         Gdx.files.internal("shader/background/stars.frag"))
         .apply {
-          if(!isCompiled) Lib.Log.error(meshShader.log)
+          if(!isCompiled) lib.log.error(meshShader.log)
         }
     }
     viewport1 = ExtendViewport(1000f,1000f,OrthographicCamera())//todo 1000f
@@ -64,10 +64,10 @@ class Core:ApplicationAdapter() {
       addActor(Image(Resources.Textures.tank))
     }
     val str = Gdx.files.internal("conf.json").readString()
-    val conf:Conf = Lib.json.parse(str)
+    val conf:Conf = lib.json.parse(str)
     model = Model(conf)
     batchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/good_blur.frag"))
-    if(!batchShader.isCompiled) Lib.Log.error(batchShader.log)
+    if(!batchShader.isCompiled) lib.log.error(batchShader.log)
     if(false) batch.shader = batchShader
     shapeRenderer = ShapeRenderer2(10000,null)
     shapeRenderer.setAutoShapeType(false)
@@ -196,9 +196,9 @@ class Core:ApplicationAdapter() {
     Resources.Font.loadedFont().draw(batch,"tick average: %.2f".format(averageTickNanos/1000),0f,100f)
     Resources.Font.loadedFont().draw(batch,"fps: "+Gdx.graphics.framesPerSecond,0f,150f)
     Resources.Font.loadedFont().draw(batch,model.playerName,0f,200f)
-    Resources.Font.loadedFont().draw(batch,"latency: "+(model.client.latencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,250f)
+    Resources.Font.loadedFont().draw(batch,"latency: "+(model.client.latencyS*lib.MILLIS_IN_SECOND).toInt(),0f,250f)
     Resources.Font.loadedFont().draw(batch,"tick: "+model.calcDisplayState()?.tick,0f,300f)
-    if(false) Resources.Font.loadedFont().draw(batch,"smart latency: "+(model.client.smartLatencyS*Lib.Const.MILLIS_IN_SECOND).toInt(),0f,300f)
+    if(false) Resources.Font.loadedFont().draw(batch,"smart latency: "+(model.client.smartLatencyS*lib.MILLIS_IN_SECOND).toInt(),0f,300f)
     if(TEST_TEXTURE) {
       batch.draw(Resources.Textures.tank,viewport2.worldWidth/2,viewport2.worldHeight/2)
       batch.draw(Resources.Textures.red,viewport2.worldWidth/3,viewport2.worldHeight/2)
@@ -218,7 +218,7 @@ class Core:ApplicationAdapter() {
       height = temp
     }
     program.setUniformf(program.fetchUniformLocation("resolution",false),width,height)
-    program.setUniformf("time",Lib.pillarTimeS(10_000f))//30f
+    program.setUniformf("time",lib.pillarTimeS(10_000f))//30f
     program.setUniformf("mouse",backgroundOffset.xf,backgroundOffset.yf)
   }
 
@@ -236,7 +236,7 @@ class Core:ApplicationAdapter() {
     return XY(x,y)
   }
 
-  private fun checkForGlError() = Gdx.gl.glGetError().let {if(it!=GL20.GL_NO_ERROR) Lib.Log.error("GL Error: $it")}
+  private fun checkForGlError() = Gdx.gl.glGetError().let {if(it!=GL20.GL_NO_ERROR) lib.log.error("GL Error: $it")}
 
   override fun dispose() {
     model.dispose()
