@@ -62,6 +62,7 @@ android {
     pickFirst 'META-INF/NOTICE.txt'
     pickFirst 'META-INF/NOTICE'
     pickFirst 'META-INF/notice.txt'
+    if(true)pickFirst 'META-INF/core.kotlin_module'
     // Excluding unnecessary meta-data:
     exclude 'META-INF/robovm/ios/robovm.xml'
     exclude 'META-INF/DEPENDENCIES.txt'
