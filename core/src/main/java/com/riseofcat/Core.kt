@@ -96,7 +96,7 @@ class Core:ApplicationAdapter() {
     val state = model.calcDisplayState()
     if(state!=null) {
       for((owner,_,_,pos) in state.cars) {
-        if(owner==model.playerId) {
+        if(owner==model.welcome?.id) {
           val previous = viewport1.camera.position.xy
           viewport1.camera.position.x = pos.xf
           viewport1.camera.position.y = pos.yf

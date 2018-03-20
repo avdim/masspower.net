@@ -43,7 +43,7 @@ class TestJson {
       if(true) {
         val serverPayloadSerializer: KSerializer<ServerPayload> = ServerPayload.serializer()
         val serverSayServerPayloadSerializer: KSerializer<ServerSay<ServerPayload>> = ServerSay.serializer(serverPayloadSerializer)
-        val serverSay = ServerSay<ServerPayload>(ServerPayload(TickDbl(0.0))/*, latency = 11*/)
+        val serverSay = ServerSay<ServerPayload>(ServerPayload()/*, latency = 11*/)
         val strJetBrains2 = lib.json.stringify(serverSayServerPayloadSerializer, serverSay)
         val serverSay2 = lib.json.parse(serverSayServerPayloadSerializer, strJetBrains2)
 //        println("serverSayS2.latency = ${serverSay2.latency}")
