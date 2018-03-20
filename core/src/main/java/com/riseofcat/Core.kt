@@ -196,7 +196,7 @@ class Core:ApplicationAdapter() {
     Resources.Font.loadedFont().draw(batch,"tick average: %.2f".format(averageTickNanos/1000),0f,100f)
     Resources.Font.loadedFont().draw(batch,"fps: "+Gdx.graphics.framesPerSecond,0f,150f)
     Resources.Font.loadedFont().draw(batch,model.playerName,0f,200f)
-    Resources.Font.loadedFont().draw(batch,"latency: "+model.client.latency.ms,0f,250f)
+    Resources.Font.loadedFont().draw(batch,"lastLatency: "+model.client.lastLatency.ms,0f,250f)
     Resources.Font.loadedFont().draw(batch,"tick: "+model.calcDisplayState()?.tick,0f,300f)
     Resources.Font.loadedFont().draw(batch,"smart latency: "+model.client.smartLatency.ms,0f,350f)
     if(TEST_TEXTURE) {
