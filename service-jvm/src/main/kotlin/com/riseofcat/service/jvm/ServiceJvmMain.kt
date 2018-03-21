@@ -16,3 +16,9 @@ private fun todo() {
   val startTime = player!!.session.get(UsageMonitorDecorator.Extra::class.java)!!.startTime
   val pingDelay = player!!.session.get(PingDecorator.Extra::class.java)!!.lastPingDelay
 }
+
+private fun test() {
+  degreesAngle(370) == degreesAngle(10)
+  degreesAngle(-10) == degreesAngle(350)
+  degreesAngle(360) == degreesAngle(0)
+}
