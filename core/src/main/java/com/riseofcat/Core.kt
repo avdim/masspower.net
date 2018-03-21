@@ -17,7 +17,7 @@ const val MULTIPLE_VIEWPORTS = false
 const val BACKGROUND_BATCH = false
 const val BACKGROUND_MESH = true
 const val DRAW_GRID = false
-val colors = arrayOf(Color.BLUE,Color.GOLD,Color.PINK,Color.RED,Color.GREEN,Color.VIOLET,Color.LIME,Color.TEAL,Color.YELLOW)
+val colors = arrayOf(Color.RED,Color.GREEN,Color.BLUE,Color.YELLOW,Color.VIOLET)
 
 class BatchWithShader(val b:SpriteBatch, val s:ShaderProgram) {
   init { b.shader = s }
