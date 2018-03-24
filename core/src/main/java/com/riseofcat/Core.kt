@@ -193,7 +193,7 @@ class Core:ApplicationAdapter() {
       setUniformf("u_step",Math.min(1f,width/70f))
       setUniformf("u_color",Vector3(0f,1f,1f))
     }
-    Resources.Font.loadedFont().draw(batch,"tick average: %.2f".format(averageTickNanos/1000),0f,100f)
+//    Resources.Font.loadedFont().draw(batch,"tick average: %.2f".format(averageTickNanos/1000),0f,100f)
     Resources.Font.loadedFont().draw(batch,"fps: "+Gdx.graphics.framesPerSecond,0f,150f)
     Resources.Font.loadedFont().draw(batch,model.playerName,0f,200f)
     Resources.Font.loadedFont().draw(batch,"lastPingDelay: "+model.client.lastPingDelay?.ms,0f,250f)
