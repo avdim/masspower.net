@@ -24,7 +24,7 @@ class BatchWithShader(val b:SpriteBatch, val s:ShaderProgram) {
 }
 
 class Core:ApplicationAdapter() {
-  private lateinit var model:Model
+  private lateinit var model:ClientModel
   private var backgroundOffset = XY()
   private var background:BatchWithShader? = null
   private lateinit var shapeRenderer:ShapeRenderer2
@@ -36,13 +36,13 @@ class Core:ApplicationAdapter() {
   private var mesh:Mesh? = null
   private lateinit var meshShader:ShaderProgram
   override fun create() {
-    val defaultVertex = Gdx.files.internal("shader/default_vertex_shader.vert")
+    val defaultVertex = shader_default_vertex_shader_vert
     ShaderProgram.pedantic = false
     batch = SpriteBatch()
     if(BACKGROUND_BATCH) {
       background = BatchWithShader(
         SpriteBatch(),
-        ShaderProgram(defaultVertex,Gdx.files.internal("shader/background/stars.frag"))
+        ShaderProgram(defaultVertex,shader_background_stars_frag)
           .apply {if(!isCompiled) lib.log.error(log)}
       )
     }
@@ -51,8 +51,8 @@ class Core:ApplicationAdapter() {
         setVertices(floatArrayOf(-1.0f,1.0f,-1.0f,-1.0f,1.0f,-1.0f,1.0f,1.0f))
         setIndices(shortArrayOf(0,1,2,2,3,0))
       }
-      meshShader = ShaderProgram(Gdx.files.internal("shader/mesh/default.vert"),
-        Gdx.files.internal("shader/background/stars.frag"))
+      meshShader = ShaderProgram(shader_mesh_default_vert,
+        shader_background_stars_frag)
         .apply {
           if(!isCompiled) lib.log.error(meshShader.log)
         }
@@ -65,8 +65,8 @@ class Core:ApplicationAdapter() {
     }
     val str = Gdx.files.internal("conf.json").readString()
     val conf:Conf = lib.json.parse(str)
-    model = Model(conf)
-    batchShader = ShaderProgram(defaultVertex,Gdx.files.internal("shader/good_blur.frag"))
+    model = ClientModel(conf)
+    batchShader = ShaderProgram(defaultVertex,shader_good_blur_frag)
     if(!batchShader.isCompiled) lib.log.error(batchShader.log)
     if(false) batch.shader = batchShader
     shapeRenderer = ShapeRenderer2(10000,null)
@@ -169,14 +169,14 @@ class Core:ApplicationAdapter() {
       }
       for(react in state.reactive) {
         calcRenderXY(state,react.pos).apply {
-          val color = colors[react.owner.id%(colors.size-1)]
+          val color = colors[react.owner.id%(colors.size)]
           shapeRenderer.color = color
           shapeRenderer.circle(xf,yf,react.radius)
         }
       }
       for(car in state.cars) {
         calcRenderXY(state,car.pos).apply {
-          val color = colors[car.owner.id%(colors.size-1)]
+          val color = colors[car.owner.id%(colors.size)]
           shapeRenderer.color = color
           shapeRenderer.circle(xf,yf,car.radius/*, 20*/)
         }

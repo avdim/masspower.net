@@ -22,3 +22,10 @@ private fun test() {
   degreesAngle(-10) == degreesAngle(350)
   degreesAngle(360) == degreesAngle(0)
 }
+
+fun testRnd(){
+  val state = State()
+  repeat(100) {
+    lib.log.info(state.rnd(360).toString())
+  }
+}

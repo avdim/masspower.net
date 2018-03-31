@@ -9,6 +9,7 @@ plugins {
 repositories {
   mavenCentral()
   jcenter()
+  maven { url = uri("http://dl.bintray.com/kotlin/ktor") }
   maven { url = uri("https://dl.bintray.com/kotlin/kotlinx") }
 }
 
