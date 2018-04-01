@@ -222,7 +222,7 @@ class Core:ApplicationAdapter() {
     program.setUniformf("mouse",backgroundOffset.xf,backgroundOffset.yf)
   }
 
-  private fun calcRenderXY(state:State,pos:XY):XY = model.calcRenderXY(state, pos, viewport1.camera.position.xy)
+  private fun calcRenderXY(state:State,pos:XY):XY = calcRenderXY(state, pos, viewport1.camera.position.xy)
   private fun checkForGlError() = Gdx.gl.glGetError().let {if(it!=GL20.GL_NO_ERROR) lib.log.error("GL Error: $it")}
 
   override fun dispose() {
