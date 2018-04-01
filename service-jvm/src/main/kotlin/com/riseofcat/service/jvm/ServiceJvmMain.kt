@@ -9,6 +9,7 @@ import com.riseofcat.share.mass.*
 fun main(vararg args:String) {
   println("service-jvm")
   println(LibJvm.test())
+  lib.log.error("some text")
 }
 
 private fun todo() {

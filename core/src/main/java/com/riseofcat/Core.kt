@@ -54,7 +54,7 @@ class Core:ApplicationAdapter() {
       meshShader = ShaderProgram(shader_mesh_default_vert,
         shader_background_stars_frag)
         .apply {
-          if(!isCompiled) lib.log.error(meshShader.log)
+          if(!isCompiled) lib.log.error(log)
         }
     }
     viewport1 = ExtendViewport(1000f,1000f,OrthographicCamera())//todo 1000f
@@ -222,20 +222,7 @@ class Core:ApplicationAdapter() {
     program.setUniformf("mouse",backgroundOffset.xf,backgroundOffset.yf)
   }
 
-  private fun calcRenderXY(state:State,pos:XY):XY {
-    var x = pos.x
-    val dx = viewport1.camera.position.x-x
-    if(dx>state.width/2)
-      x += state.width
-    else if(dx<-state.width/2) x -= state.width
-    var y = pos.y
-    val dy = viewport1.camera.position.y-y
-    if(dy>state.height/2)
-      y += state.height
-    else if(dy<-state.height/2) y -= state.height
-    return XY(x,y)
-  }
-
+  private fun calcRenderXY(state:State,pos:XY):XY = model.calcRenderXY(state, pos, viewport1.camera.position.xy)
   private fun checkForGlError() = Gdx.gl.glGetError().let {if(it!=GL20.GL_NO_ERROR) lib.log.error("GL Error: $it")}
 
   override fun dispose() {
