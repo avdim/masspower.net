@@ -1,5 +1,5 @@
-package com.riseofcat.test
-//todo move to service
+package com.riseofcat.service.jvm
+
 import com.badlogic.gdx.utils.*
 import com.google.gson.*
 import com.riseofcat.lib.*
@@ -26,13 +26,13 @@ data class Box<T>(val boxed: T)
   val extraInt:Int
 )
 
-class TestJson {
+class TestJson {//todo move to service
   companion object {
     fun testJson() {
       Json()//todo test
-      val data = DataExtra(Data<Extra>("abc",3.14, Extra("extra data", 123)))
+      val data = DataExtra(Data<Extra>("abc",3.14,Extra("extra data",123)))
       val strGson = Gson().toJson(data)
-      val dataGson:Map<String, Any> = Gson().fromJson<Map<String, Any>>(strGson,getKClass<Map<String, Any>>().java)
+      val dataGson:Map<String, Any> = Gson().fromJson<Map<String, Any>>(strGson,getKClass<Map<String,Any>>().java)
 //      val strKlaxon = Klaxon().toJsonString(data)
 //      val dataKlaxon = Klaxon().parse<Data<Extra>>(strKlaxon)
       val strJetBrains:String = lib.json.stringify(data)
@@ -43,7 +43,7 @@ class TestJson {
       if(true) {
         val serverPayloadSerializer: KSerializer<ServerPayload> = ServerPayload.serializer()
         val serverSayServerPayloadSerializer: KSerializer<ServerSay<ServerPayload>> = ServerSay.serializer(serverPayloadSerializer)
-        val serverSay = ServerSay<ServerPayload>(ServerPayload()/*, pingDelay = 11*/)
+        val serverSay = ServerSay<ServerPayload>(ServerPayload(Tick(0))/*, pingDelay = 11*/)
         val strJetBrains2 = lib.json.stringify(serverSayServerPayloadSerializer, serverSay)
         val serverSay2 = lib.json.parse(serverSayServerPayloadSerializer, strJetBrains2)
 //        println("serverSayS2.pingDelay = ${serverSay2.pingDelay}")

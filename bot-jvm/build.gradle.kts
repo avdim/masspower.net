@@ -1,5 +1,8 @@
 import org.gradle.kotlin.dsl.*
 
+val serialization_version = "0.4.2" //todo delete ?
+val gdxVersion by project //todo delete
+
 plugins {
   application
   id("kotlin-platform-jvm")
@@ -16,13 +19,15 @@ repositories {
 if(false)kotlinProject()
 
 application {
-  mainClassName = "com.riseofcat.service.jvm.ServiceJvmMainJavaAlias"
+  mainClassName = "com.riseofcat.bot.BotJvmMainJavaAlias"
 }
 
 dependencies {
+  compile(project(":core"))//todo delete
   compile(project(":lib-jvm"))
-  compile(project(":heroku-jvm"))
   compile(project(":server-common"))
-  compile(project(":desktop"))
   compile(kotlin("stdlib"))
+
+  compile("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")//todo delete
+  compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version")
 }

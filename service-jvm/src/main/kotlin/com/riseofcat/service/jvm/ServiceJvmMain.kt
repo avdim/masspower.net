@@ -7,9 +7,8 @@ import com.riseofcat.server.*
 import com.riseofcat.share.mass.*
 
 fun main(vararg args:String) {
-  println("service-jvm")
-  println(LibJvm.test())
-  lib.log.error("some text")
+  lib.log.info("test info line")
+  TestJson.testJson()
 }
 
 private fun todo() {

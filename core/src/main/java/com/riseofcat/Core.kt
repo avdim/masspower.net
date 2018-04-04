@@ -120,7 +120,7 @@ class Core:ApplicationAdapter() {
       meshShader.begin()
       applyUniform(meshShader)
       render(meshShader,GL20.GL_TRIANGLES)
-      checkForGlError()
+      checkForGlError()//todo не рендериться задник
       meshShader.end()
       if(false) Gdx.gl.glFlush()//save fps
       if(false) Gdx.gl.glFinish()//save fps
