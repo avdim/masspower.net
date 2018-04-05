@@ -9,7 +9,11 @@ import com.riseofcat.share.mass.*
 fun main(vararg args:String) {
   lib.log.info("test info line")
   TestJson.testJson()
+  val a = field
 }
+
+val field by lib.smoothByTime {5.0}
+val lz by lazy{"asd"}
 
 private fun todo() {
   val player:RoomsDecorator<ClientPayload,ServerPayload>.Room.Player? = null
