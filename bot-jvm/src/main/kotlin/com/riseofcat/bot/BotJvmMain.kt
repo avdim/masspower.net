@@ -12,7 +12,7 @@ import kotlin.concurrent.*
 fun main(vararg args:String) {
   println("bot-jvm")
   println(LibJvm.test())
-  repeat(1) {
+  repeat(8) {
 //    val model:ClientModel = ClientModel(Conf(5000, "192.168.43.176"))
 //    val model = ClientModel(Conf(5000, "localhost"))
     val model = DummyModel(Conf(5000, "localhost"))
