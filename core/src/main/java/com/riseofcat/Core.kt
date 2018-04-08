@@ -63,8 +63,11 @@ class Core:ApplicationAdapter() {
       addActor(GradientShapeRect(200,50))
       addActor(Image(Resources.Textures.tank))
     }
-    val str = Gdx.files.internal("conf.json").readString()
-    val conf:Conf = lib.json.parse(str)
+    var conf = confs.current
+    val file = Gdx.files.internal("conf.json")
+    if(file.exists()) {
+      conf = lib.json.parse(file.readString())
+    }
     model = ClientModel(conf)
     batchShader = ShaderProgram(defaultVertex,shader_good_blur_frag)
     if(!batchShader.isCompiled) lib.log.error(batchShader.log)
