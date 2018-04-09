@@ -2,14 +2,18 @@
 
 package com.riseofcat.service.jvm
 
+import com.riseofcat.client.*
+import com.riseofcat.common.*
 import com.riseofcat.lib.*
 import com.riseofcat.server.*
 import com.riseofcat.share.mass.*
+import kotlinx.coroutines.experimental.*
 
 fun main(vararg args:String) {
   lib.log.info("test info line")
   TestJson.testJson()
   val a = field
+  bots()
 }
 
 val field by lib.smoothByTime {5.0}
@@ -29,7 +33,31 @@ private fun test() {
 
 fun testRnd(){
   val state = State()
-  repeat(100) {
+//  repeat(100) {
     lib.log.info(state.rnd(360).toString())
+//  }
+}
+
+fun bots() = runBlocking {
+  val models = mutableListOf<DummyModel>()
+  repeat(100) {rpt:Int->
+    launch {
+      var messages = 0
+      val model = DummyModel(confs.current)
+      models.add(model)
+      delay(200L)
+      while(messages < 100) {
+        messages++
+        delay(rnd(30, 40))
+        if(rnd(0,1) == 1) model.move(degreesAngle(rnd(0,360)))
+        else model.newCar()
+      }
+      lib.log.info("model.client.clientMessages: ${model.client.clientMessages}")
+      lib.log.info("summ: ${models.sumBy {it.client.clientMessages}}")
+    }
+    delay(100L)
+  }
+  while(true) {
+    delay(60_000L)
   }
 }
