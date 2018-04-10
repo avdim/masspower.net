@@ -40,24 +40,23 @@ fun testRnd(){
 
 fun bots() = runBlocking {
   val models = mutableListOf<DummyModel>()
-  repeat(100) {rpt:Int->
-    launch {
+  val jobs:MutableList<Job> = mutableListOf()
+  repeat(300) {rpt:Int->
+    val job:Job = launch {
       var messages = 0
       val model = DummyModel(confs.current)
       models.add(model)
-      delay(200L)
-      while(messages < 100) {
+      while(messages < 200) {
         messages++
-        delay(rnd(30, 40))
+        delay(rnd(100, 150))
         if(rnd(0,1) == 1) model.move(degreesAngle(rnd(0,360)))
         else model.newCar()
       }
-      lib.log.info("model.client.clientMessages: ${model.client.clientMessages}")
-      lib.log.info("summ: ${models.sumBy {it.client.clientMessages}}")
     }
+    jobs.add(job)
     delay(100L)
   }
-  while(true) {
-    delay(60_000L)
-  }
+  jobs.forEach{it.join()}
+  delay(10*1000L)
+  lib.log.info("summ: ${models.sumBy {it.client.clientMessages}}")
 }

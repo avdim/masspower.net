@@ -4,6 +4,7 @@ import com.riseofcat.client.*
 import com.riseofcat.lib.*
 import com.riseofcat.share.mass.*
 
+//todo delete
 class DummyModel(conf:Conf):IClientModel {
   val client:PingClient<ServerPayload,ClientPayload> = PingClient(conf.host,conf.port,"socket",SerializeHelp.serverSayServerPayloadSerializer,SerializeHelp.clientSayClientPayloadSerializer)
   override val playerName get() = welcome?.id?.let {"Player $it"} ?: "Wait connection..."
