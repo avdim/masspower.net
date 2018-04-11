@@ -63,12 +63,11 @@ class Core:ApplicationAdapter() {
       addActor(GradientShapeRect(200,50))
       addActor(Image(Resources.Textures.tank))
     }
-    var conf = confs.current
     val file = Gdx.files.internal("conf.json")
     if(file.exists()) {
-      conf = lib.json.parse(file.readString())
+      lib.json.parse<Conf>(file.readString())
     }
-    model = ClientModel(conf)
+    model = ClientModel(confs.current.pingClient())
     batchShader = ShaderProgram(defaultVertex,shader_good_blur_frag)
     if(!batchShader.isCompiled) lib.log.error(batchShader.log)
     if(false) batch.shader = batchShader
@@ -200,7 +199,7 @@ class Core:ApplicationAdapter() {
     Resources.Font.loadedFont().draw(batch,"fps: "+Gdx.graphics.framesPerSecond,0f,150f)
     Resources.Font.loadedFont().draw(batch,model.playerName,0f,200f)
     Resources.Font.loadedFont().draw(batch,"tick: "+model.calcDisplayState()?.tick,0f,300f)
-    Resources.Font.loadedFont().draw(batch,"smart pingDelay: "+model.client.smartPingDelay.ms,0f,350f)
+    Resources.Font.loadedFont().draw(batch,"smart pingDelay: "+model.ping.smartPingDelay.ms,0f,350f)
     if(TEST_TEXTURE) {
       batch.draw(Resources.Textures.tank,viewport2.worldWidth/2,viewport2.worldHeight/2)
       batch.draw(Resources.Textures.red,viewport2.worldWidth/3,viewport2.worldHeight/2)

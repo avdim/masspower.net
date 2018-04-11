@@ -1,7 +1,6 @@
 import java.io.*
 //Порядок include имеет значение для IDE при импорте проекта и sync gradle
 include("service-jvm")
-include("bot-jvm")
 include("client-jvm")
 include("lib-jvm")
 project(":lib-jvm").projectDir = File("submodule-server/lib-jvm")

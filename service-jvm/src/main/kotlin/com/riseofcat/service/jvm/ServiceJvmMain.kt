@@ -41,12 +41,12 @@ fun testRnd(){
 fun bots() = runBlocking {
   val models = mutableListOf<DummyModel>()
   val jobs:MutableList<Job> = mutableListOf()
-  repeat(300) {rpt:Int->
+  repeat(10) {rpt:Int->
     val job:Job = launch {
       var messages = 0
       val model = DummyModel(confs.current)
       models.add(model)
-      while(messages < 200) {
+      while(true || messages < 1000) {
         messages++
         delay(rnd(100, 150))
         if(rnd(0,1) == 1) model.move(degreesAngle(rnd(0,360)))
