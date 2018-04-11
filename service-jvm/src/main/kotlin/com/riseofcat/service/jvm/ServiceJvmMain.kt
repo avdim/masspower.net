@@ -41,7 +41,7 @@ fun testRnd(){
 fun bots() = runBlocking {
   val models = mutableListOf<DummyModel>()
   val jobs:MutableList<Job> = mutableListOf()
-  repeat(10) {rpt:Int->
+  repeat(20) {rpt:Int->
     val job:Job = launch {
       var messages = 0
       val model = DummyModel(confs.current)
