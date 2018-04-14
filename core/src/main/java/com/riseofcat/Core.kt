@@ -16,7 +16,7 @@ import com.riseofcat.share.mass.*
 const val MULTIPLE_VIEWPORTS = false
 const val BACKGROUND_BATCH = false
 const val BACKGROUND_MESH = true
-const val DRAW_GRID = false
+const val DRAW_GRID = true
 val colors = arrayOf(Color.RED,Color.GREEN,Color.BLUE,Color.YELLOW,Color.VIOLET)
 
 class BatchWithShader(val b:SpriteBatch, val s:ShaderProgram) {
@@ -24,6 +24,7 @@ class BatchWithShader(val b:SpriteBatch, val s:ShaderProgram) {
 }
 
 class Core:ApplicationAdapter() {
+  val FAKE_PING  = true
   private lateinit var model:ClientModel
   private var backgroundOffset = XY()
   private var background:BatchWithShader? = null
@@ -57,7 +58,7 @@ class Core:ApplicationAdapter() {
           if(!isCompiled) lib.log.error(log)
         }
     }
-    viewport1 = ExtendViewport(1000f,1000f,OrthographicCamera())//todo 1000f
+    viewport1 = ExtendViewport(1500f,1500f,OrthographicCamera())
     viewport2 = if(MULTIPLE_VIEWPORTS) ExtendViewport(500f,500f,OrthographicCamera()) else viewport1
     stage = Stage(viewport2/*, batch*/).apply {
       addActor(GradientShapeRect(200,50))
@@ -67,7 +68,22 @@ class Core:ApplicationAdapter() {
     if(file.exists()) {
       lib.json.parse<Conf>(file.readString())
     }
-    model = ClientModel(confs.current.pingClient())
+    model = ClientModel(if(FAKE_PING) {
+      FakePingClient(ServerPayload(
+        stableTick = Tick(0),
+        welcome = Welcome(PlayerId(1),lib.time),
+        stable = State(mutableListOf(Car(PlayerId(1),20,XY(),XY()))),
+        recommendedLatency = Duration(10),
+        actions = mutableListOf<AllCommand>().apply {
+          if(false)for(i in 2..50) {
+            val pid = PlayerId(i)
+            add(AllCommand(Tick(10+i*1),pid,NewCarCommand(pid)))
+          }
+        }
+      ))
+    } else {
+      confs.current.pingClient()
+    })
     batchShader = ShaderProgram(defaultVertex,shader_good_blur_frag)
     if(!batchShader.isCompiled) lib.log.error(batchShader.log)
     if(false) batch.shader = batchShader
