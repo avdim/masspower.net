@@ -11,7 +11,8 @@ Desktop-Jar клиент: ./gradlew desktop:run
 Запустить ботов: ./gradlew service-jvm:run
 
 ### Описание:
-Это экспериментальный проект, тут много лишнего и форматирование кода тут не стандартное.    
+Это экспериментальный проект, тут много лишнего и форматирование кода не стандартное.
+        
 Common модуль лежит тут: submodule-server/server-common/.../common.kt
 Конкретные реализации: submodule_html/.../actual_js.kt и submodule-server/lib-jvm/.../actual_jvm.kt
 
