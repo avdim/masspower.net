@@ -1,4 +1,4 @@
-### Mass-Power (Kotlin MultiPlatform Game)
+### masspower.net (Kotlin MultiPlatform Game)
 git clone --recursive git@github.com:riseofcat/mass-power.git  
 or:  
 git clone --recursive https://github.com/riseofcat/mass-power.git
