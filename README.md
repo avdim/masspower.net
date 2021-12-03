@@ -1,5 +1,5 @@
-###Kotlin MultiPlatform Game 
-### Ссылка на игру https://masspower.net 
+### Игра на Kotlin MultiPlatform 
+### Web версия: https://masspower.net 
 
 ### Как собрать
 git clone --recursive git@github.com:riseofcat/mass-power.git  
