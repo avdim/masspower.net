@@ -1,16 +1,19 @@
-### https://masspower.net (Kotlin MultiPlatform Game)
+###Kotlin MultiPlatform Game 
+### Ссылка на игру https://masspower.net 
+
+### Как собрать
 git clone --recursive git@github.com:riseofcat/mass-power.git  
 or:  
 git clone --recursive https://github.com/riseofcat/mass-power.git
   
-### Запуск:
+## Запуск:
 Локальный сервер: ./gradlew heroku-jvm:run  
 Desktop-Jar клиент: ./gradlew desktop:run  
 Собрать HTML клиента: ./gradlew submodule-html:build #соберётся в submodule-html/web/index.html (Для запуска нужен web сервер, или можно из IDEA запустить)
 Собрать Android: ./gradlew android:assembleDebug #соберётся в android/build/outputs/apk  
 Запустить ботов: ./gradlew service-jvm:run
 
-### Описание:
+## Описание:
 Это экспериментальный проект, тут много лишнего и форматирование кода не стандартное.
         
 Common модуль лежит тут: submodule-server/server-common/.../common.kt
@@ -41,7 +44,7 @@ inline fun debug(block:()->Unit) {
 На одном сервере можно запускать несколько игровых комнат. Новые комнаты динамически создаются по мере наполнения.  
 Таким образом сейчас один бесплатный сервер на herokuapp может обслуживать примерно 14 комнат по 50 игроков.
        
-### Дополнительная (скучная) информация:
+## Дополнительная (скучная) информация:
 Чтобы узанть версию kotlin в каждом модуле выолнить ./gradlew dependencies  
 Сервер собрать jar: ./gradlew clean heroku-jvm:shadowJar  #создаст файл heroku-jvm/build/libs/heroku-jvm-1.0-all.jar     
 Запустить: java -jar submodule-server/heroku-jvm/build/libs/heroku-jvm-1.0-all.jar  
